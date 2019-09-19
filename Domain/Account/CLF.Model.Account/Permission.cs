@@ -7,7 +7,10 @@ namespace CLF.Model.Account
 {
   public  class Permission: TreeNode<Permission>
     {
-        public Permission(){ }
+        public Permission()
+        {
+            this.Roles = new List<AspNetRoles>();
+        }
 
         public string AreaName { get; set; }
 
@@ -23,6 +26,8 @@ namespace CLF.Model.Account
         /// 排序
         /// </summary>
         public int Index { get; set; }
+
+        public ICollection<AspNetRoles> Roles { get; set; }
 
     }
 }

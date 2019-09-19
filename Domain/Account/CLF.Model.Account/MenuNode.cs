@@ -9,7 +9,10 @@ namespace CLF.Model.Account
 {
     public  class MenuNode: TreeNode<MenuNode>
     {
-        public MenuNode() { }
+        public MenuNode()
+        {
+            this.Roles = new List<AspNetRoles>();
+        }
 
         /// <summary>
         /// 控制器名称
@@ -52,5 +55,6 @@ namespace CLF.Model.Account
                 return $"/{ControllerName.Trim()}/{ActionName.Trim()}";
             }
         }
+        public ICollection<AspNetRoles> Roles { get; set; }
     }
 }
