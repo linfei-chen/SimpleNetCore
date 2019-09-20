@@ -1,6 +1,8 @@
 ﻿using CLF.Domain.Core.Mapping;
 using CLF.Model.Account;
 using CLF.Model.Core.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -12,7 +14,7 @@ using System.Threading;
 
 namespace CLF.DataAccess.Account
 {
-    public class AccountContext : DbContext
+    public class AccountContext : IdentityDbContext<AspNetUsers,AspNetRoles,string>
     {
         public AccountContext(DbContextOptions<AccountContext> options):base(options)
         {
