@@ -2,6 +2,7 @@
 using CLF.Common.Http;
 using CLF.Common.Infrastructure;
 using CLF.DataAccess.Account;
+using CLF.Model.Account;
 using CLF.Web.Framework.Mvc.Filters;
 using EasyCaching.Core;
 using EasyCaching.InMemory;
@@ -86,9 +87,25 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
 
         public static IdentityBuilder AddIdentity(this IServiceCollection services)
         {
-            return services.AddDefaultIdentity<IdentityUser>()
+            var identityBuilder= services.AddIdentity<AspNetUsers,AspNetRoles>(options=>
+            {
+                //用户名验证
+                options.User.RequireUniqueEmail = true;
+
+                //配置用户锁定
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+
+                //配置密码
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            })
             .AddDefaultUI(UIFramework.Bootstrap4)
             .AddEntityFrameworkStores<AccountContext>();
+
+            return identityBuilder;
         }
 
         public static void AddEasyCaching(this IServiceCollection services)

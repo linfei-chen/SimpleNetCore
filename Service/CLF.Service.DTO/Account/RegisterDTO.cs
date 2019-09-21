@@ -13,7 +13,7 @@ namespace CLF.Service.DTO.Account
         [Display(Name = "邮箱")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$", ErrorMessage = "邮箱格式不正确")]
         [MaxLength(50, ErrorMessage = "{0}最大长度为{1}字符")]
-        [Remote("CheckEmail", "Account", ErrorMessage = "邮箱已经存在", HttpMethod = "post")]
+        [Remote("ExistEmail", "Account", ErrorMessage = "邮箱已经存在", HttpMethod = "post")]
         public string Email { get; set; }
 
         //[Required(ErrorMessage = "{0}必填")]
