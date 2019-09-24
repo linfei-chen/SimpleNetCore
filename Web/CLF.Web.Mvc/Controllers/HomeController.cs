@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CLF.DataAccess.Account;
+using CLF.Service.Account;
 using CLF.Service.DTO.Account;
 using CLF.Web.Framework.Infrastructure;
 using CLF.Web.Framework.Mvc.Filters;
@@ -15,13 +16,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CLF.Web.Mvc.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
+        private IAccountService _accountService;
+        private UserManager<IdentityUser> _userManager;
 
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public HomeController(UserManager<IdentityUser> userManager)
+        public HomeController(IAccountService accountService, UserManager<IdentityUser> userManager)
         {
+            this._accountService = accountService;
             this._userManager = userManager;
         }
 
@@ -44,13 +46,17 @@ namespace CLF.Web.Mvc.Controllers
 
         [AutoValidateAntiforgeryToken]
         [HttpPost]
-        public ActionResult Register(RegisterDTO model)
+        public async Task<ActionResult> Register(RegisterDTO model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
+                var result = await _accountService.CreateUserAsync(model);
+                if (result.Succeeded)
+                    return Json(true);
 
+                return ThrowJsonMessage(false, result.Errors.First().Description);
             }
-            return View();
+            return ThrowJsonMessage(false, GetModelStateErrorMessage());
         }
 
         [AllowAnonymous]

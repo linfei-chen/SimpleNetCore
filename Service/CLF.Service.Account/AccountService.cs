@@ -12,6 +12,10 @@ using CLF.Common.Extensions;
 using CLF.Service.Core.Extensions;
 using CLF.Common.Infrastructure.Mapper;
 using CLF.Service.DTO.Core;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using CLF.Common.Exceptions;
+using CLF.Common.SecurityHelper;
 
 namespace CLF.Service.Account
 {
@@ -20,11 +24,14 @@ namespace CLF.Service.Account
         private readonly PermissionRepository _permissionRepository;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IEventPublisher _eventPublisher;
-        public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher)
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher,UserManager<IdentityUser> userManager)
         {
             this._permissionRepository = permissionRepository;
             this._staticCacheManager = staticCacheManager;
             this._eventPublisher = eventPublisher;
+            this._userManager = userManager;
         }
 
         public bool AddPermission(PermissionDTO model)
@@ -95,6 +102,22 @@ namespace CLF.Service.Account
             }
             var result = _permissionRepository.LoadPermissionByFilter(predicate, "CreatedDate");
             return result.Map<List<PermissionDTO>>();
+        }
+
+        public async Task<IdentityResult> CreateUserAsync(RegisterDTO model)
+        {
+            AspNetUsers aspNetUsers = new AspNetUsers
+            {
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = false,
+                AccessFailedCount = 0,
+                TwoFactorEnabled = false,
+                Email = model.Email.Trim(),
+                UserName = model.Email.Trim(),
+                PhoneNumber = "180" + MD5Provider.Hash(model.Email.Trim()).ToString().Substring(0, 8)
+            };
+            var result = await _userManager.CreateAsync(aspNetUsers, model.Password);
+            return result;
         }
     }
 }
