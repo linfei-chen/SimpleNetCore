@@ -10,15 +10,15 @@ namespace CLF.Model.Account
     {
         public AspNetRoles()
         {
-            this.MenuNodes = new List<MenuNode>();
-            this.Permissions = new List<Permission>();
+            this.MenuNodesInRoles = new List<MenuNodesInRoles>();
+            this.PermissionsInRoles = new List<PermissionsInRoles>();
         }
         public string DisplayName { get; set; }
 
         public string Description { get; set; }
 
-        public virtual ICollection<MenuNode> MenuNodes { get; set; }
-        public virtual ICollection<Permission> Permissions { get; set; }
-
+        public virtual ICollection<MenuNodesInRoles> MenuNodesInRoles { get; set; }
+        public virtual ICollection<PermissionsInRoles> PermissionsInRoles { get; set; }
     }
 }
+ 

@@ -11,7 +11,7 @@ namespace CLF.Model.Account
     {
         public MenuNode()
         {
-            this.Roles = new List<AspNetRoles>();
+            this.MenuNodesInRoles = new List<MenuNodesInRoles>();
         }
 
         /// <summary>
@@ -55,6 +55,6 @@ namespace CLF.Model.Account
                 return $"/{ControllerName.Trim()}/{ActionName.Trim()}";
             }
         }
-        public ICollection<AspNetRoles> Roles { get; set; }
+        public ICollection<MenuNodesInRoles> MenuNodesInRoles { get; set; }
     }
 }

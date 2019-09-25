@@ -9,7 +9,7 @@ namespace CLF.Model.Account
     {
         public Permission()
         {
-            this.Roles = new List<AspNetRoles>();
+            this.PermissionsInRoles = new List<PermissionsInRoles>();
         }
 
         public string AreaName { get; set; }
@@ -27,7 +27,7 @@ namespace CLF.Model.Account
         /// </summary>
         public int Index { get; set; }
 
-        public ICollection<AspNetRoles> Roles { get; set; }
+        public ICollection<PermissionsInRoles> PermissionsInRoles { get; set; }
 
     }
 }
