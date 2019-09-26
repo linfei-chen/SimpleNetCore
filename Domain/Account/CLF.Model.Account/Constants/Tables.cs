@@ -6,9 +6,9 @@ namespace CLF.Model.Account.Constants
 {
     public sealed class Tables
     {
-        public const string AspNetRole =  "AspNetRole";
+        public const string AspNetRoles =  "AspNetRoles";
 
-        public const string AspNetUser = "AspNetUser";
+        public const string AspNetUsers = "AspNetUsers";
         public const string AspNetUsersInRoles ="AspNetUsersInRoles";
 
         public const string MenuNode = "MenuNode";

@@ -1,5 +1,7 @@
 ﻿using CLF.Domain.Core.Mapping;
 using CLF.Model.Account;
+using CLF.Model.Account.Constants;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,8 @@ namespace CLF.DataAccess.Account.Mapping
     {
         public override void Configure(EntityTypeBuilder<MenuNodesInRoles> builder)
         {
+            builder.ToTable(Tables.MenuNodesInRoles);
+
             builder.HasOne(p => p.MenuNode)
                 .WithMany(p => p.MenuNodesInRoles)
                 .HasForeignKey(k => k.MenuNodeId);

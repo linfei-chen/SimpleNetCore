@@ -1,5 +1,7 @@
 ﻿using CLF.Domain.Core.Mapping;
 using CLF.Model.Account;
+using CLF.Model.Account.Constants;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,8 @@ namespace CLF.DataAccess.Account.Mapping
     {
         public override void Configure(EntityTypeBuilder<PermissionsInRoles> builder)
         {
+            builder.ToTable(Tables.PermissionsInRoles);
+
             builder.HasOne(p => p.Permission)
                 .WithMany(p => p.PermissionsInRoles)
                 .HasForeignKey(k => k.PermissionId);
