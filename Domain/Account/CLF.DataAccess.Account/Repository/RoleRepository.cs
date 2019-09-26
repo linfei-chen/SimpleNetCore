@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,9 +22,10 @@ namespace CLF.DataAccess.Account.Repository
         {
             var permission = await base.Context.Set<Permission>().FirstOrDefaultAsync(m => m.Id == permissionId);
             var role = await base.Context.Set<AspNetRoles>().FirstOrDefaultAsync(m => m.Id == roleid);
-            if (permission != null && role != null && !role.Permissions.Contains(permission))
+            if (permission != null && role != null && !role.PermissionsInRoles.Any(p=>p.PermissionId==permissionId))
             {
-                role.Permissions.Add(permission);
+                var permissionsInRoles = new PermissionsInRoles { RoleId = roleid, PermissionId = permissionId };
+                role.PermissionsInRoles.Add(permissionsInRoles);
                 return base.Context.SaveChanges() > 0;
             }
             return true;

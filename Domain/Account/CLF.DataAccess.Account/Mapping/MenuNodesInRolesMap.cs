@@ -18,10 +18,12 @@ namespace CLF.DataAccess.Account.Mapping
         {
             builder.ToTable(Tables.MenuNodesInRoles);
 
+            builder.HasKey(k => new { k.MenuNodeId, k.RoleId });
+
             builder.HasOne(p => p.MenuNode)
                 .WithMany(p => p.MenuNodesInRoles)
                 .HasForeignKey(k => k.MenuNodeId);
-
+               
             builder.HasOne(p => p.AspNetRoles)
                 .WithMany(p => p.MenuNodesInRoles)
                 .HasForeignKey(k => k.RoleId);

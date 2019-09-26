@@ -27,7 +27,7 @@ namespace CLF.Model.Account
         /// </summary>
         public int Index { get; set; }
 
-        public ICollection<PermissionsInRoles> PermissionsInRoles { get; set; }
+        public virtual IList<PermissionsInRoles> PermissionsInRoles { get; set; }
 
     }
 }

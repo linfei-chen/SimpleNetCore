@@ -18,6 +18,8 @@ namespace CLF.DataAccess.Account.Mapping
         {
             builder.ToTable(Tables.PermissionsInRoles);
 
+            builder.HasKey(k => new { k.PermissionId, k.RoleId });
+
             builder.HasOne(p => p.Permission)
                 .WithMany(p => p.PermissionsInRoles)
                 .HasForeignKey(k => k.PermissionId);

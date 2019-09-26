@@ -55,6 +55,6 @@ namespace CLF.Model.Account
                 return $"/{ControllerName.Trim()}/{ActionName.Trim()}";
             }
         }
-        public ICollection<MenuNodesInRoles> MenuNodesInRoles { get; set; }
+        public virtual IList<MenuNodesInRoles> MenuNodesInRoles { get; set; }
     }
 }
