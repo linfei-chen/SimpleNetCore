@@ -12,6 +12,8 @@ using CLF.Model.Account;
 using CLF.Model.Core;
 using CLF.Service.Account;
 using CLF.Service.Core.Events;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,18 @@ namespace CLF.Web.Framework.Infrastructure
             builder.Register(context => new PermissionRepository(context.ResolveNamed<EFUnitOfWorkContextBase>("AccountUnitOfWorkContext")))
                 .AsSelf().InstancePerLifetimeScope();
 
+
+            #endregion
+
+            #region UserManager，RoleManager
+            builder.RegisterType<UserManager<AspNetUsers>>().As<UserManager<AspNetUsers>>().InstancePerLifetimeScope();
+            builder.RegisterType<RoleManager<AspNetRoles>>().As<RoleManager<AspNetRoles>>().InstancePerLifetimeScope();
+            builder.RegisterType<PasswordHasher<AspNetUsers>>().As<IPasswordHasher<AspNetUsers>>().InstancePerLifetimeScope();
+            builder.RegisterType<PasswordValidator<AspNetUsers>>().As<IPasswordValidator<AspNetUsers>>().InstancePerLifetimeScope();
+            builder.RegisterType<UserValidator<AspNetUsers>>().As<IUserValidator<AspNetUsers>>().InstancePerLifetimeScope();
+            builder.RegisterType<RoleValidator<AspNetRoles>>().As<IRoleValidator<AspNetRoles>>().InstancePerLifetimeScope();
+            builder.RegisterType<UpperInvariantLookupNormalizer>().As<ILookupNormalizer>().InstancePerLifetimeScope();
+            builder.RegisterType<IdentityErrorDescriber>().AsSelf().InstancePerLifetimeScope();
 
             #endregion
 

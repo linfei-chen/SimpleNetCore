@@ -21,7 +21,7 @@ namespace CLF.Web.Mvc.Controllers
         private IAccountService _accountService;
         private UserManager<IdentityUser> _userManager;
 
-        public HomeController(IAccountService accountService, UserManager<IdentityUser> userManager)
+        public  HomeController(IAccountService accountService, UserManager<IdentityUser> userManager)
         {
             this._accountService = accountService;
             this._userManager = userManager;

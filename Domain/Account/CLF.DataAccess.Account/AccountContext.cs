@@ -18,7 +18,7 @@ namespace CLF.DataAccess.Account
     {
         public AccountContext(DbContextOptions<AccountContext> options):base(options)
         {
-
+            
         }
 
         public DbSet<MenuNode> MenuNodes { get; set; }

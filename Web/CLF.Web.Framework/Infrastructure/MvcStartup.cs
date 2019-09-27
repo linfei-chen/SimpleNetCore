@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CLF.Web.Framework.Infrastructure.Extensions;
+using CLF.Model.Account;
+using System;
+using Microsoft.AspNetCore.Identity;
+using CLF.DataAccess.Account;
 
 namespace CLF.Web.Framework.Infrastructure
 {
@@ -28,7 +32,7 @@ namespace CLF.Web.Framework.Infrastructure
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddIdentity();
+            services.AddAppIdentity<IdentityUser,IdentityRole>();
             services.AddAppMvc();
         }
     }

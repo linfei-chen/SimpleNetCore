@@ -24,14 +24,17 @@ namespace CLF.Service.Account
         private readonly PermissionRepository _permissionRepository;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IEventPublisher _eventPublisher;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AspNetUsers> _userManager;
+        private readonly RoleManager<AspNetRoles> _roleManager;
 
-        public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher,UserManager<IdentityUser> userManager)
+        public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher
+            , UserManager<AspNetUsers> userManager,RoleManager<AspNetRoles> roleManager)
         {
             this._permissionRepository = permissionRepository;
             this._staticCacheManager = staticCacheManager;
             this._eventPublisher = eventPublisher;
             this._userManager = userManager;
+            this._roleManager = roleManager;
         }
 
         public bool AddPermission(PermissionDTO model)

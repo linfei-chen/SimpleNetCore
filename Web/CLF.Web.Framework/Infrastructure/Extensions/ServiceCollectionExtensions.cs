@@ -85,25 +85,27 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
             return mvcBuilder;
         }
 
-        public static IdentityBuilder AddIdentity(this IServiceCollection services)
+        public static IdentityBuilder AddAppIdentity<TUser, TRole>(this IServiceCollection services) where TUser : IdentityUser where TRole : IdentityRole
         {
-            var identityBuilder= services.AddIdentity<AspNetUsers,AspNetRoles>(options=>
-            {
-                //用户名验证
-                options.User.RequireUniqueEmail = true;
+            services.AddScoped<SignInManager<TUser>, SignInManager<TUser>>();
 
-                //配置用户锁定
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
-                options.Lockout.MaxFailedAccessAttempts = 10;
+            var identityBuilder = services.AddIdentity<AspNetUsers, AspNetRoles>(options =>
+              {
+                  //用户名验证
+                  options.User.RequireUniqueEmail = true;
 
-                //配置密码
-                options.Password.RequiredLength = 6;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-            })
-            .AddDefaultUI(UIFramework.Bootstrap4)
-            .AddEntityFrameworkStores<AccountContext>();
+                  //配置用户锁定
+                  options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                  options.Lockout.MaxFailedAccessAttempts = 10;
+
+                  //配置密码
+                  options.Password.RequiredLength = 6;
+                  options.Password.RequireDigit = false;
+                  options.Password.RequireLowercase = false;
+                  options.Password.RequireUppercase = false;
+              })
+               .AddDefaultTokenProviders()
+               .AddEntityFrameworkStores<AccountContext>();
 
             return identityBuilder;
         }
