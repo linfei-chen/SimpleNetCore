@@ -57,6 +57,7 @@ namespace CLF.Service.Account
 
             return _permissionRepository.Modify(permission);
         }
+
         public bool DeletePermissions(List<int> ids)
         {
             var permissions = _permissionRepository.Find(m => ids.Contains(m.Id) && !m.IsDeleted);

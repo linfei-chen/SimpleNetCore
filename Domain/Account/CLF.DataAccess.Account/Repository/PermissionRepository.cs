@@ -31,17 +31,20 @@ namespace CLF.DataAccess.Account.Repository
        Expression<Func<Permission, bool>> predicate, string sortProperty, bool ascending = true)
         {
             EFContext.Context.ChangeTracker.LazyLoadingEnabled = false;
+
             var q = Entities
               .Where(predicate).AsNoTracking();
             int recordCount = q.Count();
-
-            var data = new Tuple<int, IList<Permission>>(recordCount,
-                q.SingleOrderBy(sortProperty, ascending)
+            var query = q.SingleOrderBy(sortProperty, ascending)
                     .Skip((pageIndex) * pageSize)
-                    .Take(pageSize)
-                    .ToList());
+                    .Take(pageSize);
+
+            var sql = query.ToSql();//生成sql语句
+
+            var data = new Tuple<int, IList<Permission>>(recordCount,query.ToList());
 
             EFContext.Context.ChangeTracker.LazyLoadingEnabled = true;
+
             return data;
         }
     }
