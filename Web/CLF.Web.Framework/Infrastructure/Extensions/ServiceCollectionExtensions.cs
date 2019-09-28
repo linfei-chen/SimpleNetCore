@@ -89,7 +89,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             services.AddScoped<SignInManager<TUser>, SignInManager<TUser>>();
 
-            var identityBuilder = services.AddIdentity<AspNetUsers, AspNetRoles>(options =>
+            var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
                   //用户名验证
                   options.User.RequireUniqueEmail = true;

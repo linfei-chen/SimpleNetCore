@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using CLF.Common.Exceptions;
 using CLF.Common.SecurityHelper;
+using System.Linq;
 
 namespace CLF.Service.Account
 {
@@ -28,7 +29,7 @@ namespace CLF.Service.Account
         private readonly RoleManager<AspNetRoles> _roleManager;
 
         public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher
-            , UserManager<AspNetUsers> userManager,RoleManager<AspNetRoles> roleManager)
+            , UserManager<AspNetUsers> userManager, RoleManager<AspNetRoles> roleManager)
         {
             this._permissionRepository = permissionRepository;
             this._staticCacheManager = staticCacheManager;

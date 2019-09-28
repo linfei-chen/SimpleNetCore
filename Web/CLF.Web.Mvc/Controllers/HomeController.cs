@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CLF.DataAccess.Account;
+using CLF.Model.Account;
 using CLF.Service.Account;
 using CLF.Service.DTO.Account;
 using CLF.Web.Framework.Infrastructure;
@@ -18,10 +19,10 @@ namespace CLF.Web.Mvc.Controllers
 {
     public class HomeController : BaseController
     {
+        private UserManager<AspNetUsers> _userManager;
         private IAccountService _accountService;
-        private UserManager<IdentityUser> _userManager;
 
-        public  HomeController(IAccountService accountService, UserManager<IdentityUser> userManager)
+        public  HomeController(IAccountService accountService,UserManager<AspNetUsers> userManager)
         {
             this._accountService = accountService;
             this._userManager = userManager;

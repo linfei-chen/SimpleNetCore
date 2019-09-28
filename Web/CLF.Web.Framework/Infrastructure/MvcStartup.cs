@@ -10,7 +10,7 @@ using CLF.DataAccess.Account;
 
 namespace CLF.Web.Framework.Infrastructure
 {
-    public  class MvcStartup : IAppStartup
+    public class MvcStartup : IAppStartup
     {
         public int Order => 1000;
 
@@ -32,7 +32,7 @@ namespace CLF.Web.Framework.Infrastructure
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAppIdentity<IdentityUser,IdentityRole>();
+            services.AddAppIdentity<AspNetUsers, AspNetRoles>();
             services.AddAppMvc();
         }
     }
