@@ -22,7 +22,7 @@ namespace CLF.Service.Account
         #endregion
 
         #region 登陆注册
-        Task<IdentityResult> CreateUserAsync(RegisterDTO model);
+        Task<KeyValuePair<IdentityResult, AspNetUsers>> CreateUserAsync(RegisterDTO model);
 
         #endregion
     }

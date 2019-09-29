@@ -109,7 +109,7 @@ namespace CLF.Service.Account
             return result.Map<List<PermissionDTO>>();
         }
 
-        public async Task<IdentityResult> CreateUserAsync(RegisterDTO model)
+        public async Task<KeyValuePair<IdentityResult, AspNetUsers>> CreateUserAsync(RegisterDTO model)
         {
             AspNetUsers aspNetUsers = new AspNetUsers
             {
@@ -122,7 +122,7 @@ namespace CLF.Service.Account
                 PhoneNumber = "180" + MD5Provider.Hash(model.Email.Trim()).ToString().Substring(0, 8)
             };
             var result = await _userManager.CreateAsync(aspNetUsers, model.Password);
-            return result;
+            return new KeyValuePair<IdentityResult, AspNetUsers>(result, aspNetUsers);
         }
     }
 }

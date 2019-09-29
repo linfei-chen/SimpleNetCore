@@ -39,12 +39,25 @@ namespace CLF.Web.Mvc.Controllers
             return View();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> Login(SignInDTO model)
+        {
+            if(!ModelState.IsValid)
+            {
+                
+                return ThrowJsonMessage(false, GetModelStateErrorMessage());
+            }
+            return null;
+        }
+
         [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [AutoValidateAntiforgeryToken]
         [HttpPost]
         public async Task<ActionResult> Register(RegisterDTO model)
@@ -52,10 +65,16 @@ namespace CLF.Web.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _accountService.CreateUserAsync(model);
-                if (result.Succeeded)
-                    return Json(true);
+                if (result.Key.Succeeded)
+                {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(result.Value);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new {user=result.Value, code = code });
 
-                return ThrowJsonMessage(false, result.Errors.First().Description);
+                    //发送邮件
+                    //await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    return Json(true);
+                }
+                return ThrowJsonMessage(false, result.Key.Errors.First().Description);
             }
             return ThrowJsonMessage(false, GetModelStateErrorMessage());
         }
@@ -69,6 +88,20 @@ namespace CLF.Web.Mvc.Controllers
 
             var result = await _userManager.FindByEmailAsync(email);
             return Json(result == null);
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmEmail(AspNetUsers user,string code)
+        {
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                return View();
+            }
+            else
+            {
+                return View("Error");
+            }
         }
     }
 }
