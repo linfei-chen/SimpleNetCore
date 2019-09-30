@@ -48,10 +48,6 @@ namespace CLF.Web.Framework.Identity
             AspNetUsers user = await UserManager.FindByEmailAsync(model.UserName);
             if (user == null)
                 user = UserManager.Users.FirstOrDefault(o => o.PhoneNumber == model.UserName);
-            if (user == null)
-            {
-                return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.NotFoundUser, user);
-            }
 
             var status = await CheckUserStatusAsync(UserManager, user);
             if (status != SignInStatus.Success)
