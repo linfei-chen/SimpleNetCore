@@ -18,4 +18,8 @@
     <ProjectReference Include="..\..\Service\CLF.Service.Account\CLF.Service.Account.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

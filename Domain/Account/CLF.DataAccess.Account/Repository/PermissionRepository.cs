@@ -39,7 +39,7 @@ namespace CLF.DataAccess.Account.Repository
                     .Skip((pageIndex) * pageSize)
                     .Take(pageSize);
 
-            var sql = query.ToSql();//生成sql语句
+            //var sql = query.ToSql();//生成sql语句
 
             var data = new Tuple<int, IList<Permission>>(recordCount,query.ToList());
 

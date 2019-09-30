@@ -87,8 +87,6 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
 
         public static IdentityBuilder AddAppIdentity<TUser, TRole>(this IServiceCollection services) where TUser : IdentityUser where TRole : IdentityRole
         {
-            services.AddScoped<SignInManager<TUser>, SignInManager<TUser>>();
-
             var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
                   //用户名验证

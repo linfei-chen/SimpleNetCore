@@ -31,6 +31,4 @@ namespace CLF.Service.DTO.Account
         [Display(Name = "登录失败次数")]
         public int FailedLoginCount { get; set; }
     }
-
-    public enum
 }

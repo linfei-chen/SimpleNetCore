@@ -12,6 +12,7 @@ using CLF.Model.Account;
 using CLF.Model.Core;
 using CLF.Service.Account;
 using CLF.Service.Core.Events;
+using CLF.Web.Framework.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
@@ -43,7 +44,7 @@ namespace CLF.Web.Framework.Infrastructure
 
             #endregion
 
-            #region UserManager，RoleManager
+            #region UserManager，RoleManager，SignInManager
             builder.RegisterType<UserManager<AspNetUsers>>().As<UserManager<AspNetUsers>>().InstancePerLifetimeScope();
             builder.RegisterType<RoleManager<AspNetRoles>>().As<RoleManager<AspNetRoles>>().InstancePerLifetimeScope();
             builder.RegisterType<PasswordHasher<AspNetUsers>>().As<IPasswordHasher<AspNetUsers>>().InstancePerLifetimeScope();
@@ -52,6 +53,9 @@ namespace CLF.Web.Framework.Infrastructure
             builder.RegisterType<RoleValidator<AspNetRoles>>().As<IRoleValidator<AspNetRoles>>().InstancePerLifetimeScope();
             builder.RegisterType<UpperInvariantLookupNormalizer>().As<ILookupNormalizer>().InstancePerLifetimeScope();
             builder.RegisterType<IdentityErrorDescriber>().AsSelf().InstancePerLifetimeScope();
+
+            builder.RegisterType<ApplicationSignInManager>().As<SignInManager<AspNetUsers>>().InstancePerLifetimeScope();
+
 
             #endregion
 
