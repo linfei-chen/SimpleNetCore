@@ -32,9 +32,11 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             services.AddHttpContextAccessor();
 
-            var appconfig = services.ConfigureStartupConfig<AppConfig>(configuration.GetSection("App"));
+            var emailConfig = services.ConfigureStartupConfig<EmailConfig>(configuration.GetSection("Email"));
+            var appConfig = services.ConfigureStartupConfig<AppConfig>(configuration.GetSection("App"));
+
             var engine = EngineContext.Create();
-            var serviceProvider = engine.ConfigureServices(services, configuration,appconfig);
+            var serviceProvider = engine.ConfigureServices(services, configuration, appConfig);
 
             services.AddSerilog();
 

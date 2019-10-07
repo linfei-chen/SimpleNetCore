@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CLF.Service.Core.Messages;
 
 namespace CLF.Web.Mvc.Controllers
 {
@@ -23,9 +24,10 @@ namespace CLF.Web.Mvc.Controllers
         private ApplicationSignInManager _applicationSignInManager;
         private UserManager<AspNetUsers> _userManager;
         private IAccountService _accountService;
-
-        public HomeController(IAccountService accountService, ApplicationSignInManager applicationSignInManager, UserManager<AspNetUsers> userManager)
+        private IEmailSender _emailSender;
+        public HomeController (IEmailSender emailSender, IAccountService accountService, ApplicationSignInManager applicationSignInManager, UserManager<AspNetUsers> userManager)
         {
+            this._emailSender = emailSender;
             this._applicationSignInManager = applicationSignInManager;
             this._userManager = userManager;
             this._accountService = accountService;
@@ -91,7 +93,14 @@ namespace CLF.Web.Mvc.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { user = result.Value, code = code });
 
                     //发送邮件
-                    //await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    EmailMessage emailMessage = new EmailMessage
+                    {
+                        Subject = "注册激活",
+                        Body = callbackUrl,
+                        To =new List<string> {model.Email }
+                    };
+                     _emailSender.SendAsync(emailMessage);
+
                     //保持登陆
                     SignInDTO signInModel = new SignInDTO { UserName = model.Email, Password = model.Password };
                     await _applicationSignInManager.PasswordSignInAsync(signInModel, false, false);

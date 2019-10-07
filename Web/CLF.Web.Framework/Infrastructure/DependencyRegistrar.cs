@@ -12,6 +12,7 @@ using CLF.Model.Account;
 using CLF.Model.Core;
 using CLF.Service.Account;
 using CLF.Service.Core.Events;
+using CLF.Service.Core.Messages;
 using CLF.Web.Framework.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -65,6 +66,7 @@ namespace CLF.Web.Framework.Infrastructure
             builder.RegisterType<EventPublisher>().As<IEventPublisher>().SingleInstance();
 
             #endregion
+            builder.RegisterType<EmailSender>().As<IEmailSender>().InstancePerLifetimeScope();
 
             #region 缓存
             builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().InstancePerLifetimeScope();
