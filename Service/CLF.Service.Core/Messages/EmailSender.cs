@@ -45,17 +45,15 @@ namespace CLF.Service.Core.Messages
 
         private SmtpClient PrepareSmtpClient(EmailConfig emailConfig)
         {
-            using (var smtpClient = new SmtpClient())
-            {
-                smtpClient.UseDefaultCredentials = emailConfig.UseDefaultCredentials;
-                smtpClient.Host = emailConfig.Host;
-                smtpClient.Port = emailConfig.Port;
-                smtpClient.EnableSsl = emailConfig.EnableSsl;
-                smtpClient.Credentials = emailConfig.UseDefaultCredentials ?
-                    CredentialCache.DefaultNetworkCredentials :
-                    new NetworkCredential(emailConfig.UserName, emailConfig.Password);
-                return smtpClient;
-            }
+            var smtpClient = new SmtpClient();
+            smtpClient.UseDefaultCredentials = emailConfig.UseDefaultCredentials;
+            smtpClient.Host = emailConfig.Host;
+            smtpClient.Port = emailConfig.Port;
+            smtpClient.EnableSsl = emailConfig.EnableSsl;
+            smtpClient.Credentials = emailConfig.UseDefaultCredentials ?
+                CredentialCache.DefaultNetworkCredentials :
+                new NetworkCredential(emailConfig.UserName, emailConfig.Password);
+            return smtpClient;
         }
 
         private MailMessage PrepareMailMessage(EmailConfig emailConfig, string subject, string body, List<string> toAddress, List<string> cc = null,
