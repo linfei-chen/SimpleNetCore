@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CLF.Test
+namespace CLF.Service.Test
 {
     public class TestServiceProvider : IServiceProvider
     {

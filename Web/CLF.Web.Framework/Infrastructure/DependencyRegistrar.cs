@@ -55,8 +55,7 @@ namespace CLF.Web.Framework.Infrastructure
             builder.RegisterType<UpperInvariantLookupNormalizer>().As<ILookupNormalizer>().InstancePerLifetimeScope();
             builder.RegisterType<IdentityErrorDescriber>().AsSelf().InstancePerLifetimeScope();
 
-            builder.RegisterType<ApplicationSignInManager>().As<SignInManager<AspNetUsers>>().InstancePerLifetimeScope();
-
+            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerLifetimeScope();
 
             #endregion
 

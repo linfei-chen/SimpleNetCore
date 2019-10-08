@@ -113,7 +113,7 @@ namespace CLF.Service.Account
         {
             AspNetUsers aspNetUsers = new AspNetUsers
             {
-                EmailConfirmed = true,
+                EmailConfirmed = false,
                 PhoneNumberConfirmed = false,
                 AccessFailedCount = 0,
                 TwoFactorEnabled = false,

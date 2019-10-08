@@ -6,6 +6,7 @@ using CLF.Model.Account;
 using CLF.Web.Framework.Mvc.Filters;
 using EasyCaching.Core;
 using EasyCaching.InMemory;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -91,8 +92,12 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
+                
+                  //options.Tokens.EmailConfirmationTokenProvider=new DataProtectorTokenProvider()
                   //用户名验证
                   options.User.RequireUniqueEmail = true;
+
+                  options.SignIn.RequireConfirmedEmail = true;
 
                   //配置用户锁定
                   options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
@@ -103,6 +108,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                   options.Password.RequireDigit = false;
                   options.Password.RequireLowercase = false;
                   options.Password.RequireUppercase = false;
+                  options.Password.RequireNonAlphanumeric = false;
               })
                .AddDefaultTokenProviders()
                .AddEntityFrameworkStores<AccountContext>();

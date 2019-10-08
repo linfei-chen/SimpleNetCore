@@ -25,7 +25,7 @@ namespace CLF.Service.Test
                        config.SetBasePath(Directory.GetCurrentDirectory());
                        config.AddJsonFile("appsettings.json");
                    })
-                      .UseStartup<CLF.Web.Mvc.Startup>();
+                   .UseStartup<CLF.Web.Mvc.Startup>();
 
             var server = new TestServer(builder);
         }

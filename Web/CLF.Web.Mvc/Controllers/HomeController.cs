@@ -16,6 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CLF.Service.Core.Messages;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace CLF.Web.Mvc.Controllers
 {
@@ -25,12 +28,12 @@ namespace CLF.Web.Mvc.Controllers
         private UserManager<AspNetUsers> _userManager;
         private IAccountService _accountService;
         private IEmailSender _emailSender;
-        public HomeController (IEmailSender emailSender, IAccountService accountService, ApplicationSignInManager applicationSignInManager, UserManager<AspNetUsers> userManager)
+        public HomeController (IEmailSender emailSender, IAccountService accountService,UserManager<AspNetUsers> userManager,ApplicationSignInManager applicationSignInManager)
         {
             this._emailSender = emailSender;
-            this._applicationSignInManager = applicationSignInManager;
             this._userManager = userManager;
             this._accountService = accountService;
+            this._applicationSignInManager = applicationSignInManager;
         }
 
         public IActionResult Index()
@@ -48,8 +51,11 @@ namespace CLF.Web.Mvc.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ThrowIfException]
-        public async Task<ActionResult> Login(SignInDTO model, string returnUrl)
+        public async Task<ActionResult> Login([FromBody]SignInDTO model, string returnUrl)
         {
+            if(string.IsNullOrEmpty(returnUrl))
+                return ThrowJsonMessage(false);
+
             if (!ModelState.IsValid)
             {
                 return ThrowJsonMessage(false, GetModelStateErrorMessage());
@@ -59,6 +65,9 @@ namespace CLF.Web.Mvc.Controllers
             result = await _applicationSignInManager.PasswordSignInAsync(model);
             switch (result.Key)
             {
+                case SignInStatus.InvalidEmail:
+                    ModelState.AddModelError("Email", "注册邮件尚未激活！");
+                    break;
                 case SignInStatus.NotFoundUser:
                     ModelState.AddModelError("Email", "账户或密码错误，请重新输入！");
                     break;
@@ -79,32 +88,28 @@ namespace CLF.Web.Mvc.Controllers
         }
 
         [AllowAnonymous]
-        [AutoValidateAntiforgeryToken]
+        //[AutoValidateAntiforgeryToken]
         [HttpPost]
         [ThrowIfException]
-        public async Task<ActionResult> Register(RegisterDTO model)
+        public async Task<ActionResult> Register([FromBody]RegisterDTO model)
         {
             if (ModelState.IsValid)
             {
                 var result = await _accountService.CreateUserAsync(model);
                 if (result.Key.Succeeded)
                 {
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(result.Value);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { user = result.Value, code = code });
-
-                    //发送邮件
+                    //发送验证邮件
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var transformCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Action("ConfirmEmail", "Home", new { email = result.Value.Email, code = transformCode });
                     EmailMessage emailMessage = new EmailMessage
                     {
                         Subject = "注册激活",
                         Body = callbackUrl,
-                        To =new List<string> {model.Email }
+                        To = new List<string> { model.Email }
                     };
-                     _emailSender.SendAsync(emailMessage);
-
-                    //保持登陆
-                    SignInDTO signInModel = new SignInDTO { UserName = model.Email, Password = model.Password };
-                    await _applicationSignInManager.PasswordSignInAsync(signInModel, false, false);
-
+                    await  _emailSender.SendAsync(emailMessage);
                     return Json(true);
                 }
                 return ThrowJsonMessage(false, result.Key.Errors.First().Description);
@@ -124,17 +129,20 @@ namespace CLF.Web.Mvc.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ConfirmEmail(AspNetUsers user,string code)
+        public async Task<ActionResult> ConfirmEmail(string email, string code)
         {
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            if (result.Succeeded)
+            if (!string.IsNullOrEmpty(email) &&!string.IsNullOrEmpty(code))
             {
-                return View();
-            }
-            else
-            {
+                var user = await _userManager.FindByEmailAsync(email);
+                var transformCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                var result = await _userManager.ConfirmEmailAsync(user,transformCode );
+                if (result.Succeeded)
+                {
+                    return View();
+                }
                 return View("Error");
             }
+            return View("Error");
         }
     }
 }

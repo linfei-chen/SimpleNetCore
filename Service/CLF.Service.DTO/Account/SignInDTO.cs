@@ -23,7 +23,7 @@ namespace CLF.Service.DTO.Account
         [Display(Name = "微信公众号")]
         public string OpenId { get; set; }
 
-        [Required(ErrorMessage = "{0}必填")]
+        //[Required(ErrorMessage = "{0}必填")]
         [StringLength(4, ErrorMessage = "请输入4位验证码")]
         [Display(Name = "验证码")]
         public string VerificationCode { get; set; }
