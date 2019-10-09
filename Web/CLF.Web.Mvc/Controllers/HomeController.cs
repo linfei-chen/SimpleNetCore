@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Web;
+using System.Text.Encodings.Web;
 
 namespace CLF.Web.Mvc.Controllers
 {
@@ -101,7 +102,7 @@ namespace CLF.Web.Mvc.Controllers
                     EmailMessage emailMessage = new EmailMessage
                     {
                         Subject = "注册激活",
-                        Body = callbackUrl,
+                        Body = $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>请单击激活账户</a>.",
                         To = new List<string> { model.Email }
                     };
                     await _emailSender.SendAsync(emailMessage);
