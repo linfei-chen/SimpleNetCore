@@ -52,7 +52,7 @@ namespace CLF.Web.Mvc.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ThrowIfException]
-        public async Task<ActionResult> Login([FromBody]SignInDTO model, string returnUrl)
+        public async Task<ActionResult> Login(SignInDTO model, string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
                 return ThrowJsonMessage(false);
