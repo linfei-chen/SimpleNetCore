@@ -33,7 +33,7 @@ namespace CLF.Web.Framework.Identity
             IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<AspNetUsers>> logger, IAuthenticationSchemeProvider schemes)
             : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
         {
-
+           
         }
 
         /// <summary>

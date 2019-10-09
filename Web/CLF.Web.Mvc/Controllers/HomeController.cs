@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CLF.DataAccess.Account;
 using CLF.Model.Account;
 using CLF.Service.Account;
 using CLF.Service.DTO.Account;
 using CLF.Web.Framework.Identity;
-using CLF.Web.Framework.Infrastructure;
 using CLF.Web.Framework.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using CLF.Service.Core.Messages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
@@ -102,7 +97,7 @@ namespace CLF.Web.Mvc.Controllers
                     var user = result.Value;
                     //发送验证邮件
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { email = user.Email, code = HttpUtility.UrlEncode(code) });
+                    var callbackUrl = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { email = user.Email, code = HttpUtility.UrlEncode(code) }, Request.Scheme,Request.Host.Host);
                     EmailMessage emailMessage = new EmailMessage
                     {
                         Subject = "注册激活",
