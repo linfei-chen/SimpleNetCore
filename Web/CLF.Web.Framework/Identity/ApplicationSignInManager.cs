@@ -53,11 +53,6 @@ namespace CLF.Web.Framework.Identity
             if (status != SignInStatus.Success)
                 return new KeyValuePair<SignInStatus, AspNetUsers>(status, user);
 
-            if(!await UserManager.IsEmailConfirmedAsync(user))
-            {
-                return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.InvalidEmail, user);
-            }
-
             if (await UserManager.CheckPasswordAsync(user, model.Password))
             {
                 await UserManager.ResetAccessFailedCountAsync(user);
@@ -85,6 +80,9 @@ namespace CLF.Web.Framework.Identity
         {
             if (user == null)
                 return SignInStatus.NotFoundUser;
+
+            if (await userManager.IsEmailConfirmedAsync(user))
+                return SignInStatus.InvalidEmail;
 
             if (await userManager.IsLockedOutAsync(user))
                 return SignInStatus.LockedOut;
