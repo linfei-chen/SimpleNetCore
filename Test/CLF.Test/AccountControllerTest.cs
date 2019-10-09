@@ -7,6 +7,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using Newtonsoft.Json;
+using System;
 
 namespace CLF.Test
 {
@@ -35,17 +36,25 @@ namespace CLF.Test
         [Fact]
         public  async void Test_Register()
         {
-            string action = "/home/register";
-            RegisterDTO model = new RegisterDTO
+            try
             {
-                Email = "chenlinfei929@126.com",
-                Password = "qwert123",
-                ConfirmPassword = "qwert123"
-            };
-            var result = await _client.PostAsJsonAsync(action, model);
-            result.EnsureSuccessStatusCode();
+                string action = "/home/register";
+                RegisterDTO model = new RegisterDTO
+                {
+                    Email = "chenlinfei929@126.com",
+                    Password = "qwert123",
+                    ConfirmPassword = "qwert123"
+                };
+                var result = await _client.PostAsJsonAsync(action, model);
+                result.EnsureSuccessStatusCode();
 
-            var data = await result.Content.ReadAsStringAsync();
+                var data = await result.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         /// <summary>

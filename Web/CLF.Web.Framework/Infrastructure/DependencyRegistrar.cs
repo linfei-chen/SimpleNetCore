@@ -14,6 +14,7 @@ using CLF.Service.Account;
 using CLF.Service.Core.Events;
 using CLF.Service.Core.Messages;
 using CLF.Web.Framework.Identity;
+using CLF.Web.Framework.Identity.Providers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
@@ -56,6 +57,7 @@ namespace CLF.Web.Framework.Infrastructure
             builder.RegisterType<IdentityErrorDescriber>().AsSelf().InstancePerLifetimeScope();
 
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType<CustomEmailConfirmationTokenProvider<AspNetUsers>>().AsSelf().InstancePerLifetimeScope();
 
             #endregion
 

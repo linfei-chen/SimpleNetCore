@@ -33,6 +33,10 @@ namespace CLF.Web.Framework.Infrastructure
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddAppIdentity<AspNetUsers, AspNetRoles>();
+            services.Configure<DataProtectionTokenProviderOptions>(cfg =>
+            {
+                cfg.TokenLifespan = TimeSpan.FromHours(3);//配置token过期时间
+            });
             services.AddAppMvc();
         }
     }

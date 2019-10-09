@@ -84,10 +84,10 @@ namespace CLF.Web.Mvc.Controllers
         }
 
         [AllowAnonymous]
-        [AutoValidateAntiforgeryToken]
+        //[AutoValidateAntiforgeryToken]
         [HttpPost]
         [ThrowIfException]
-        public async Task<ActionResult> Register(RegisterDTO model)
+        public async Task<ActionResult> Register([FromBody]RegisterDTO model)
         {
             if (ModelState.IsValid)
             {

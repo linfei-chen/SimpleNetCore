@@ -3,6 +3,7 @@ using CLF.Common.Http;
 using CLF.Common.Infrastructure;
 using CLF.DataAccess.Account;
 using CLF.Model.Account;
+using CLF.Web.Framework.Identity.Providers;
 using CLF.Web.Framework.Mvc.Filters;
 using EasyCaching.Core;
 using EasyCaching.InMemory;
@@ -92,16 +93,19 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
-                  options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
-                  options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultEmailProvider;
-                 
+                  //options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+                  //options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultEmailProvider;
+
+                  options.Tokens.ProviderMap.Add("CustomEmailConfirmation",new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<TUser>)));
+                  options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+
                   //用户名验证
                   options.User.RequireUniqueEmail = true;
 
                   options.SignIn.RequireConfirmedEmail = true;
-
+                 
                   //配置用户锁定
-                  options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                  options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
                   options.Lockout.MaxFailedAccessAttempts = 10;
 
                   //配置密码
@@ -111,7 +115,8 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                   options.Password.RequireUppercase = false;
                   options.Password.RequireNonAlphanumeric = false;
               })
-               .AddDefaultTokenProviders()
+               .AddDefaultUI(UIFramework.Bootstrap4)
+               //.AddDefaultTokenProviders()
                .AddEntityFrameworkStores<AccountContext>();
 
             return identityBuilder;
