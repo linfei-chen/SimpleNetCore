@@ -94,7 +94,7 @@ namespace CLF.Web.Mvc.Controllers
                 var result = await _accountService.CreateUserAsync(model);
                 if (result.Key.Succeeded)
                 {
-                    var user = result.Value;
+                    AspNetUsers user = result.Value;
                     //发送验证邮件
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { email = user.Email, code = HttpUtility.UrlEncode(code) }, Request.Scheme,Request.Host.Host);

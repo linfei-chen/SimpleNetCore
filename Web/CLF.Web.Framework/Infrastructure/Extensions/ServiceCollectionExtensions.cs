@@ -93,10 +93,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
-                  //options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
-                  //options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultEmailProvider;
-
-                  options.Tokens.ProviderMap.Add("CustomEmailConfirmation",new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<TUser>)));
+                  options.Tokens.ProviderMap.Add("CustomEmailConfirmation", new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<TUser>)));
                   options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
 
                   //用户名验证
