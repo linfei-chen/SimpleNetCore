@@ -92,8 +92,10 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var identityBuilder = services.AddIdentity<TUser, TRole>(options =>
               {
-                
-                  //options.Tokens.EmailConfirmationTokenProvider=new DataProtectorTokenProvider()
+
+                  options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+                  options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultEmailProvider;
+
                   //用户名验证
                   options.User.RequireUniqueEmail = true;
 

@@ -19,6 +19,7 @@ using CLF.Service.Core.Messages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using System.Web;
 
 namespace CLF.Web.Mvc.Controllers
 {
@@ -28,7 +29,7 @@ namespace CLF.Web.Mvc.Controllers
         private UserManager<AspNetUsers> _userManager;
         private IAccountService _accountService;
         private IEmailSender _emailSender;
-        public HomeController (IEmailSender emailSender, IAccountService accountService,UserManager<AspNetUsers> userManager,ApplicationSignInManager applicationSignInManager)
+        public HomeController(IEmailSender emailSender, IAccountService accountService, UserManager<AspNetUsers> userManager, ApplicationSignInManager applicationSignInManager)
         {
             this._emailSender = emailSender;
             this._userManager = userManager;
@@ -53,7 +54,7 @@ namespace CLF.Web.Mvc.Controllers
         [ThrowIfException]
         public async Task<ActionResult> Login([FromBody]SignInDTO model, string returnUrl)
         {
-            if(string.IsNullOrEmpty(returnUrl))
+            if (string.IsNullOrEmpty(returnUrl))
                 return ThrowJsonMessage(false);
 
             if (!ModelState.IsValid)
@@ -98,18 +99,17 @@ namespace CLF.Web.Mvc.Controllers
                 var result = await _accountService.CreateUserAsync(model);
                 if (result.Key.Succeeded)
                 {
+                    var user = result.Value;
                     //发送验证邮件
-                    var user = await _userManager.FindByEmailAsync(model.Email);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var transformCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Action("ConfirmEmail", "Home", new { email = result.Value.Email, code = transformCode });
+                    var callbackUrl = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { email = user.Email, code = HttpUtility.UrlEncode(code) });
                     EmailMessage emailMessage = new EmailMessage
                     {
                         Subject = "注册激活",
                         Body = callbackUrl,
                         To = new List<string> { model.Email }
                     };
-                    await  _emailSender.SendAsync(emailMessage);
+                    await _emailSender.SendAsync(emailMessage);
                     return Json(true);
                 }
                 return ThrowJsonMessage(false, result.Key.Errors.First().Description);
@@ -131,11 +131,10 @@ namespace CLF.Web.Mvc.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string email, string code)
         {
-            if (!string.IsNullOrEmpty(email) &&!string.IsNullOrEmpty(code))
+            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(code))
             {
                 var user = await _userManager.FindByEmailAsync(email);
-                var transformCode = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-                var result = await _userManager.ConfirmEmailAsync(user,transformCode );
+                var result = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(code));
                 if (result.Succeeded)
                 {
                     return View();
