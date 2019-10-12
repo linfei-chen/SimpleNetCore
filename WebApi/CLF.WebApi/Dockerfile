@@ -4,20 +4,19 @@
 FROM microsoft/dotnet:2.2-aspnetcore-runtime-nanoserver-1803 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM microsoft/dotnet:2.2-sdk-nanoserver-1803 AS build
 WORKDIR /src
-COPY ["WebApi/CLF.WebApi.Account/CLF.WebApi.Account.csproj", "WebApi/CLF.WebApi.Account/"]
-RUN dotnet restore "WebApi/CLF.WebApi.Account/CLF.WebApi.Account.csproj"
+COPY ["WebApi/CLF.WebApi/CLF.WebApi.csproj", "WebApi/CLF.WebApi/"]
+RUN dotnet restore "WebApi/CLF.WebApi/CLF.WebApi.csproj"
 COPY . .
-WORKDIR "/src/WebApi/CLF.WebApi.Account"
-RUN dotnet build "CLF.WebApi.Account.csproj" -c Release -o /app
+WORKDIR "/src/WebApi/CLF.WebApi"
+RUN dotnet build "CLF.WebApi.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "CLF.WebApi.Account.csproj" -c Release -o /app
+RUN dotnet publish "CLF.WebApi.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "CLF.WebApi.Account.dll"]
+ENTRYPOINT ["dotnet", "CLF.WebApi.dll"]

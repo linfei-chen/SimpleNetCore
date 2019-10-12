@@ -21,8 +21,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using Serilog.Events;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace CLF.Web.Framework.Infrastructure.Extensions
@@ -98,7 +100,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
 
                   //用户名验证
                   options.User.RequireUniqueEmail = true;
-
+                 
                   options.SignIn.RequireConfirmedEmail = true;
                  
                   //配置用户锁定

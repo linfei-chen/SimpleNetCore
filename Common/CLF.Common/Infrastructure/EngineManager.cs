@@ -44,7 +44,7 @@ namespace CLF.Common.Infrastructure
             var typeFinder = new AppDomainTypeFinder();
             var startupConfigurations = typeFinder.FindClassesOfType<IAppStartup>();
 
-            //创建项目所有实现IAppStartup接口类的实例，实现配置服务方法
+            //创建项目所有实现IAppStartup接口类的实例，实现ConfigureServices方法
             var instances = startupConfigurations
                 .Select(startup => (IAppStartup)Activator.CreateInstance(startup))
                 .OrderBy(startup => startup.Order);
