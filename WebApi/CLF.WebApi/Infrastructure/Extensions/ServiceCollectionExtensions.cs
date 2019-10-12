@@ -34,7 +34,7 @@ namespace CLF.WebApi.Infrastructure.Extensions
                     }
                 });
 
-                // 为 Swagger JSON and UI设置xml文档注释路径
+                //设置xml文档注释路径
                 var basePath = Path.GetDirectoryName(typeof(CLF.WebApi.Program).Assembly.Location);
                 var xmlPath = Path.Combine(basePath, "Swagger.xml");
                 c.IncludeXmlComments(xmlPath);
