@@ -7,6 +7,7 @@ using CLF.Web.Framework.Identity.Providers;
 using CLF.Web.Framework.Mvc.Filters;
 using EasyCaching.Core;
 using EasyCaching.InMemory;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
@@ -207,6 +209,31 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         return RollingInterval.Hour;
                 }
             }
+        }
+
+        /// <summary>
+        /// 添加Jwt验证
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddAppAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var appConfig = services.ConfigureStartupConfig<JwtConfig>(configuration.GetSection("Jwt"));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.FromSeconds(35),
+                        ValidAudience = appConfig.SecurityKey,
+                        ValidIssuer = appConfig.Domain,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appConfig.SecurityKey))
+                    };
+                });
         }
 
         public static TConfig ConfigureStartupConfig<TConfig>(this IServiceCollection services, IConfiguration configuration) where TConfig : class, new()

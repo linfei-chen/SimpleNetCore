@@ -21,5 +21,12 @@ namespace CLF.Common.Configuration
         public string RollingInterval { get; set; }
     }
 
-
+    public partial class JwtConfig
+    {
+        //jwt
+        public string SecurityKey { get; set; }
+        public string Domain { get; set; }
+        public string AppId { get; set; }
+        public string AppSecret { get; set; }
+    }
 }
