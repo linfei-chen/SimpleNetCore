@@ -60,7 +60,10 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
             var appConfig = services.ConfigureStartupConfig<AppConfig>(configuration.GetSection("App"));
             services.AddDbContextPool<TDbContext>(optionsBuilder =>
             {
-                optionsBuilder.UseSqlServer(appConfig.SqlServerConnectionString);
+                if (appConfig.MySqlEnabled)
+                    optionsBuilder.UseMySql(appConfig.MySqlConnectionString);
+                else
+                    optionsBuilder.UseSqlServer(appConfig.SqlServerConnectionString);
             });
         }
 
@@ -217,7 +220,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         /// <param name="services"></param>
         public static void AddAppAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            var appConfig = services.ConfigureStartupConfig<JwtConfig>(configuration.GetSection("Jwt"));
+            var jwtConfig = services.ConfigureStartupConfig<JwtConfig>(configuration.GetSection("Jwt"));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -229,9 +232,9 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ClockSkew = TimeSpan.FromSeconds(35),
-                        ValidAudience = appConfig.SecurityKey,
-                        ValidIssuer = appConfig.Domain,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appConfig.SecurityKey))
+                        ValidAudience = jwtConfig.SecurityKey,
+                        ValidIssuer = jwtConfig.Domain,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
                     };
                 });
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -24,7 +25,7 @@ namespace CLF.Model.Core.Data
         public bool Leaf { get; set; }
         public int Level { get; set; }
 
-        [ForeignKey("ParentId")]
+        //[ForeignKey("ParentId")]
         public virtual List<T> ChildNodes { get; set; }
         public virtual T ParentNode { get; set; }
     }

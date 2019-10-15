@@ -9,6 +9,10 @@ namespace CLF.Common.Configuration
     {
         public string SqlServerConnectionString { get; set; }
 
+        //mysql
+        public bool MySqlEnabled { get; set; }
+        public string MySqlConnectionString { get; set; }
+
         //redis
         public string RedisConnectionString { get; set; }
         public int? RedisDatabaseId { get; set; }
