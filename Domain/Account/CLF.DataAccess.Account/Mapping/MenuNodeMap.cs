@@ -16,6 +16,10 @@ namespace CLF.DataAccess.Account.Mapping
             builder.ToTable(Tables.MenuNode);
 
             builder.HasKey(p => p.Id);
+            //builder.Property(p => p.Id)
+            //    .UseSqlServerIdentityColumn()
+            //    .UseMySqlIdentityColumn();
+
             builder.Property(p => p.ControllerName).HasMaxLength(128);
             builder.Property(p => p.ActionName).HasMaxLength(128);
             builder.Property(p => p.Description).HasMaxLength(512);

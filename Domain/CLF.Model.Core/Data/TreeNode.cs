@@ -11,8 +11,7 @@ namespace CLF.Model.Core.Data
     {
         public TreeNode() { }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? ParentId { get; set; }

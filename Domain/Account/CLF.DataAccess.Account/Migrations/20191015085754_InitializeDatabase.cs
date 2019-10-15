@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CLF.DataAccess.Account.Migrations
 {
-    public partial class AddAspNetUsersAndAspNetRolesTable : Migration
+    public partial class InitializeDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -62,11 +62,81 @@ namespace CLF.DataAccess.Account.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MenuNode",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    ParentId = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(maxLength: 128, nullable: true),
+                    TreeCode = table.Column<string>(maxLength: 128, nullable: true),
+                    Leaf = table.Column<bool>(nullable: false),
+                    Level = table.Column<int>(nullable: false),
+                    ParentNodeId = table.Column<int>(nullable: true),
+                    ControllerName = table.Column<string>(maxLength: 128, nullable: true),
+                    ActionName = table.Column<string>(maxLength: 128, nullable: true),
+                    Description = table.Column<string>(maxLength: 512, nullable: true),
+                    Index = table.Column<int>(nullable: false),
+                    SmallIcon = table.Column<string>(maxLength: 256, nullable: true),
+                    BigIcon = table.Column<string>(maxLength: 256, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuNode", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MenuNode_MenuNode_ParentNodeId",
+                        column: x => x.ParentNodeId,
+                        principalTable: "MenuNode",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permission",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    ModifiedDate = table.Column<DateTime>(nullable: false),
+                    ParentId = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(maxLength: 128, nullable: true),
+                    TreeCode = table.Column<string>(maxLength: 128, nullable: true),
+                    Leaf = table.Column<bool>(nullable: false),
+                    Level = table.Column<int>(nullable: false),
+                    ParentNodeId = table.Column<int>(nullable: true),
+                    AreaName = table.Column<string>(nullable: true),
+                    ControllerName = table.Column<string>(maxLength: 128, nullable: true),
+                    ActionName = table.Column<string>(maxLength: 128, nullable: true),
+                    Description = table.Column<string>(maxLength: 512, nullable: true),
+                    Remark = table.Column<string>(nullable: true),
+                    Index = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permission", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Permission_Permission_ParentNodeId",
+                        column: x => x.ParentNodeId,
+                        principalTable: "Permission",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -83,59 +153,11 @@ namespace CLF.DataAccess.Account.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MenuNodesInRoles",
-                columns: table => new
-                {
-                    MenuNodeId = table.Column<int>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MenuNodesInRoles", x => new { x.MenuNodeId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_MenuNodesInRoles_MenuNode_MenuNodeId",
-                        column: x => x.MenuNodeId,
-                        principalTable: "MenuNode",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MenuNodesInRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PermissionsInRoles",
-                columns: table => new
-                {
-                    PermissionId = table.Column<int>(nullable: false),
-                    RoleId = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PermissionsInRoles", x => new { x.PermissionId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_PermissionsInRoles_Permission_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permission",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PermissionsInRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -215,6 +237,54 @@ namespace CLF.DataAccess.Account.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MenuNodesInRoles",
+                columns: table => new
+                {
+                    MenuNodeId = table.Column<int>(nullable: false),
+                    RoleId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuNodesInRoles", x => new { x.MenuNodeId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_MenuNodesInRoles_MenuNode_MenuNodeId",
+                        column: x => x.MenuNodeId,
+                        principalTable: "MenuNode",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MenuNodesInRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionsInRoles",
+                columns: table => new
+                {
+                    PermissionId = table.Column<int>(nullable: false),
+                    RoleId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionsInRoles", x => new { x.PermissionId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_PermissionsInRoles_Permission_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permission",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PermissionsInRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -224,8 +294,7 @@ namespace CLF.DataAccess.Account.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -251,13 +320,22 @@ namespace CLF.DataAccess.Account.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MenuNode_ParentNodeId",
+                table: "MenuNode",
+                column: "ParentNodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MenuNodesInRoles_RoleId",
                 table: "MenuNodesInRoles",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permission_ParentNodeId",
+                table: "Permission",
+                column: "ParentNodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PermissionsInRoles_RoleId",
@@ -290,6 +368,12 @@ namespace CLF.DataAccess.Account.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "MenuNode");
+
+            migrationBuilder.DropTable(
+                name: "Permission");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
