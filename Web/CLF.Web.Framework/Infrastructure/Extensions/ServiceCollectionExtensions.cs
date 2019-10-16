@@ -233,7 +233,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         ValidateIssuerSigningKey = true,
                         ClockSkew = TimeSpan.FromSeconds(35),
                         ValidAudience = jwtConfig.SecurityKey,
-                        ValidIssuer = jwtConfig.Domain,
+                        ValidIssuer = jwtConfig.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
                     };
                 });

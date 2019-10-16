@@ -28,9 +28,13 @@ namespace CLF.Common.Configuration
     public partial class JwtConfig
     {
         //jwt
-        public string SecurityKey { get; set; }
-        public string Domain { get; set; }
         public string AppId { get; set; }
         public string AppSecret { get; set; }
+        public string SecurityKey { get; set; }
+        public string Issuer { get; set; }
+        /// <summary>
+        /// 过期时间分钟
+        /// </summary>
+        public int ExpireTime => 1*120;
     }
 }

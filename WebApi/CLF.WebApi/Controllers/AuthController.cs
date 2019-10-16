@@ -23,27 +23,27 @@ namespace CLF.WebApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [ThrowIfException]
-        public ActionResult GetToken(string userName, string password)
+        public ActionResult GetAccessToken(string userName=null, string password=null,string refreshToken=null)
         {
             var config = EngineContext.Current.Resolve<JwtConfig>();
             if (config == null)
-                throw new BusinessPromptException($"{nameof(config)}不能为空");
+                throw new BusinessPromptException($"{nameof(config)}内部错误");
 
             if (string.Equals(userName, config.AppId) && string.Equals(password, config.AppSecret))
             {
                 var claims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
-                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(30)).ToUnixTimeSeconds()}"),
+                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(config.ExpireTime)).ToUnixTimeSeconds()}"),
                     new Claim(ClaimTypes.Name, userName)
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.SecurityKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
-                    issuer: config.Domain,
-                    audience: config.Domain,
+                    issuer: config.Issuer,
+                    audience: config.Issuer,
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddMinutes(config.ExpireTime),
                     signingCredentials: creds);
 
                 return Ok(new

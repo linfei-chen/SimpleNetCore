@@ -3,6 +3,7 @@ using System;
 using CLF.DataAccess.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CLF.DataAccess.Account.Migrations
@@ -15,7 +16,8 @@ namespace CLF.DataAccess.Account.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CLF.Model.Account.AspNetRoles", b =>
                 {
@@ -51,7 +53,8 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -117,7 +120,8 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -125,7 +129,8 @@ namespace CLF.DataAccess.Account.Migrations
             modelBuilder.Entity("CLF.Model.Account.MenuNode", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ActionName")
                         .HasMaxLength(128);
@@ -189,7 +194,8 @@ namespace CLF.DataAccess.Account.Migrations
             modelBuilder.Entity("CLF.Model.Account.Permission", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ActionName")
                         .HasMaxLength(128);
@@ -251,7 +257,8 @@ namespace CLF.DataAccess.Account.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
@@ -270,7 +277,8 @@ namespace CLF.DataAccess.Account.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
@@ -325,11 +333,27 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
                     b.Property<string>("Value");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<string>");
+                });
+
+            modelBuilder.Entity("CLF.Model.Account.AspNetUserTokens", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<string>");
+
+                    b.Property<DateTime?>("ExpiredDateTime");
+
+                    b.Property<string>("Issuer");
+
+                    b.HasDiscriminator().HasValue("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("CLF.Model.Account.MenuNode", b =>

@@ -17,5 +17,7 @@ namespace CLF.Model.Account.Constants
         public const string Permission = "Permission";
         public const string PermissionsInRoles = "PermissionsInRoles";
 
+        public const string AspNetUserTokens = "AspNetUserTokens";
+
     }
 }
