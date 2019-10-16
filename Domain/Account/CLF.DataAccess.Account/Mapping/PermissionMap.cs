@@ -14,12 +14,10 @@ namespace CLF.DataAccess.Account.Mapping
         public override void Configure(EntityTypeBuilder<Permission> builder)
         {
             builder.ToTable(Tables.Permission);
-
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd()
-                .UseSqlServerIdentityColumn();
-
+            //builder.Property(p => p.Id)
+            //    .ValueGeneratedOnAdd()
+            //    .UseSqlServerIdentityColumn();
             builder.Property(p => p.ControllerName).HasMaxLength(128);
             builder.Property(p => p.ActionName).HasMaxLength(128);
             builder.Property(p => p.Description).HasMaxLength(512);

@@ -11,7 +11,8 @@ namespace CLF.Model.Core.Data
     {
         public TreeNode() { }
 
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int Id { get; set; }
 
         public int? ParentId { get; set; }
@@ -24,7 +25,7 @@ namespace CLF.Model.Core.Data
         public bool Leaf { get; set; }
         public int Level { get; set; }
 
-        //[ForeignKey("ParentId")]
+        [ForeignKey("ParentId")]
         public virtual List<T> ChildNodes { get; set; }
         public virtual T ParentNode { get; set; }
     }

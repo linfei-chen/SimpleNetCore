@@ -3,14 +3,13 @@ using System;
 using CLF.DataAccess.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CLF.DataAccess.Account.Migrations
 {
     [DbContext(typeof(AccountContext))]
-    [Migration("20191015085754_InitializeDatabase")]
+    [Migration("20191016011543_InitializeDatabase")]
     partial class InitializeDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,8 +162,6 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.Property<int?>("ParentId");
 
-                    b.Property<int?>("ParentNodeId");
-
                     b.Property<string>("SmallIcon")
                         .HasMaxLength(256);
 
@@ -173,7 +170,7 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentNodeId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("MenuNode");
                 });
@@ -194,8 +191,7 @@ namespace CLF.DataAccess.Account.Migrations
             modelBuilder.Entity("CLF.Model.Account.Permission", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ActionName")
                         .HasMaxLength(128);
@@ -229,8 +225,6 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.Property<int?>("ParentId");
 
-                    b.Property<int?>("ParentNodeId");
-
                     b.Property<string>("Remark");
 
                     b.Property<string>("TreeCode")
@@ -238,7 +232,7 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentNodeId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Permission");
                 });
@@ -344,7 +338,7 @@ namespace CLF.DataAccess.Account.Migrations
                 {
                     b.HasOne("CLF.Model.Account.MenuNode", "ParentNode")
                         .WithMany("ChildNodes")
-                        .HasForeignKey("ParentNodeId");
+                        .HasForeignKey("ParentId");
                 });
 
             modelBuilder.Entity("CLF.Model.Account.MenuNodesInRoles", b =>
@@ -364,7 +358,7 @@ namespace CLF.DataAccess.Account.Migrations
                 {
                     b.HasOne("CLF.Model.Account.Permission", "ParentNode")
                         .WithMany("ChildNodes")
-                        .HasForeignKey("ParentNodeId");
+                        .HasForeignKey("ParentId");
                 });
 
             modelBuilder.Entity("CLF.Model.Account.PermissionsInRoles", b =>

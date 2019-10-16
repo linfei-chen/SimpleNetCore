@@ -66,7 +66,8 @@ namespace CLF.DataAccess.Account.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -77,7 +78,6 @@ namespace CLF.DataAccess.Account.Migrations
                     TreeCode = table.Column<string>(maxLength: 128, nullable: true),
                     Leaf = table.Column<bool>(nullable: false),
                     Level = table.Column<int>(nullable: false),
-                    ParentNodeId = table.Column<int>(nullable: true),
                     ControllerName = table.Column<string>(maxLength: 128, nullable: true),
                     ActionName = table.Column<string>(maxLength: 128, nullable: true),
                     Description = table.Column<string>(maxLength: 512, nullable: true),
@@ -89,8 +89,8 @@ namespace CLF.DataAccess.Account.Migrations
                 {
                     table.PrimaryKey("PK_MenuNode", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MenuNode_MenuNode_ParentNodeId",
-                        column: x => x.ParentNodeId,
+                        name: "FK_MenuNode_MenuNode_ParentId",
+                        column: x => x.ParentId,
                         principalTable: "MenuNode",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -101,7 +101,8 @@ namespace CLF.DataAccess.Account.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -112,7 +113,6 @@ namespace CLF.DataAccess.Account.Migrations
                     TreeCode = table.Column<string>(maxLength: 128, nullable: true),
                     Leaf = table.Column<bool>(nullable: false),
                     Level = table.Column<int>(nullable: false),
-                    ParentNodeId = table.Column<int>(nullable: true),
                     AreaName = table.Column<string>(nullable: true),
                     ControllerName = table.Column<string>(maxLength: 128, nullable: true),
                     ActionName = table.Column<string>(maxLength: 128, nullable: true),
@@ -124,8 +124,8 @@ namespace CLF.DataAccess.Account.Migrations
                 {
                     table.PrimaryKey("PK_Permission", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Permission_Permission_ParentNodeId",
-                        column: x => x.ParentNodeId,
+                        name: "FK_Permission_Permission_ParentId",
+                        column: x => x.ParentId,
                         principalTable: "Permission",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -323,9 +323,9 @@ namespace CLF.DataAccess.Account.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MenuNode_ParentNodeId",
+                name: "IX_MenuNode_ParentId",
                 table: "MenuNode",
-                column: "ParentNodeId");
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MenuNodesInRoles_RoleId",
@@ -333,9 +333,9 @@ namespace CLF.DataAccess.Account.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permission_ParentNodeId",
+                name: "IX_Permission_ParentId",
                 table: "Permission",
-                column: "ParentNodeId");
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PermissionsInRoles_RoleId",
