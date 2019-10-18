@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using CLF.Common.Exceptions;
 using CLF.Common.SecurityHelper;
 using System.Linq;
+using CLF.Domain.Core.EFRepository;
 
 namespace CLF.Service.Account
 {
@@ -27,7 +28,7 @@ namespace CLF.Service.Account
         private readonly IEventPublisher _eventPublisher;
         private readonly UserManager<AspNetUsers> _userManager;
         private readonly RoleManager<AspNetRoles> _roleManager;
-
+ 
         public AccountService(PermissionRepository permissionRepository, IStaticCacheManager staticCacheManager, IEventPublisher eventPublisher
             , UserManager<AspNetUsers> userManager, RoleManager<AspNetRoles> roleManager)
         {

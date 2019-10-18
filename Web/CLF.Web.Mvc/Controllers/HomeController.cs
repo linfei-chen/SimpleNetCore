@@ -139,5 +139,12 @@ namespace CLF.Web.Mvc.Controllers
             }
             return View("Error");
         }
+
+        public async Task<JsonResult> GenerateUserTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var rusult = await _userManager.GenerateUserTokenAsync(user, "Jwt", "xxxxxxxxxxxxxxxxx");
+            return Json(true);
+        }
     }
 }

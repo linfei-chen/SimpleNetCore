@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CLF.Common.Configuration;
 using CLF.Common.Exceptions;
 using CLF.Common.Infrastructure;
+using CLF.Service.Account;
 using CLF.Web.Framework.Mvc.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,18 @@ namespace CLF.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IAccountService _accountService;
+        public AuthController(IAccountService accountService)
+        {
+            this._accountService = accountService;
+        }
+
+        public ActionResult Login(string userName, string password)
+        {
+
+        }
+
+
         [AllowAnonymous]
         [HttpGet]
         [ThrowIfException]

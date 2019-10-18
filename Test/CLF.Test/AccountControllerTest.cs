@@ -90,5 +90,15 @@ namespace CLF.Test
 
             var data = await result.Content.ReadAsStringAsync();
         }
+        [Fact]
+        public async void Test_GenerateUserTokenAsync()
+        {
+            string email = "chenlinfei929@126.com";
+            string action = "/home/generateUserTokenAsync?email="+email;
+            var result = await _client.GetAsync(action);
+            result.EnsureSuccessStatusCode();
+
+            var data = await result.Content.ReadAsStringAsync();
+          }
     }
 }

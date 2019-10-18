@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CLF.Web.Framework.Infrastructure.Extensions
 {
@@ -235,6 +236,17 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         ValidAudience = jwtConfig.SecurityKey,
                         ValidIssuer = jwtConfig.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if(context.Exception.GetType()==typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 });
         }
