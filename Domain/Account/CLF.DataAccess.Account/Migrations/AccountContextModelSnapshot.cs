@@ -59,6 +59,40 @@ namespace CLF.DataAccess.Account.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
+            modelBuilder.Entity("CLF.Model.Account.AspNetUserSecurityToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(512);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsRevoked");
+
+                    b.Property<string>("ModifiedBy");
+
+                    b.Property<DateTime>("ModifiedDate");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired();
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AspNetUserSecurityToken");
+                });
+
             modelBuilder.Entity("CLF.Model.Account.AspNetUsers", b =>
                 {
                     b.Property<string>("Id")
@@ -333,27 +367,11 @@ namespace CLF.DataAccess.Account.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("Value");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<string>");
-                });
-
-            modelBuilder.Entity("CLF.Model.Account.AspNetUserTokens", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<string>");
-
-                    b.Property<DateTime?>("ExpiredDateTime");
-
-                    b.Property<string>("Issuer");
-
-                    b.HasDiscriminator().HasValue("AspNetUserTokens");
                 });
 
             modelBuilder.Entity("CLF.Model.Account.MenuNode", b =>

@@ -30,6 +30,12 @@ namespace CLF.Service.Account.AutoMapper.Profile
 
             CreateMap<PermissionDTO, Permission>()
                 .IncludeBase<EntityDTO, Entity>();
+
+            CreateMap<AspNetUserSecurityTokenDTO, AspNetUserSecurityToken>()
+              .IncludeBase<EntityDTO, Entity>();
+
+            CreateMap<AspNetUserSecurityToken, AspNetUserSecurityTokenDTO>()
+              .IncludeBase<Entity, EntityDTO>();
         }
         public int Order => 0;
     }

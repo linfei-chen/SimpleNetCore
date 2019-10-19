@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CLF.Service.Core;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using CLF.Service.Core;
-using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
-namespace CLF.Web.Mvc.Controllers
+namespace CLF.Web.Framework.Mvc
 {
     public class BaseController : Controller
     {
@@ -19,7 +19,7 @@ namespace CLF.Web.Mvc.Controllers
             return Json(result);
         }
 
-       public string GetModelStateErrorMessage()
+        public string GetModelStateErrorMessage()
         {
             string message = string.Empty;
             foreach (var value in ModelState.Values.Where(o => o.Errors.Any()))
@@ -33,7 +33,7 @@ namespace CLF.Web.Mvc.Controllers
             return message;
         }
 
-        public virtual JsonResult ThrowJsonMessage(bool success, string message=null)
+        public virtual JsonResult ThrowJsonMessage(bool success, string message = null)
         {
             return Json(new ServiceResult<bool>(success ? ServiceResultType.Success : ServiceResultType.Error, message));
         }

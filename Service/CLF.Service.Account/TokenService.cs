@@ -1,10 +1,17 @@
 ﻿using CLF.Common.Configuration;
+using CLF.Common.Extensions;
 using CLF.Common.Infrastructure;
 using CLF.Common.SecurityHelper;
+using CLF.DataAccess.Account;
+using CLF.Domain.Core.EFRepository;
+using CLF.Model.Account;
+using CLF.Service.Core.Extensions;
+using CLF.Service.DTO.Account;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 
@@ -12,7 +19,12 @@ namespace CLF.Service.Account
 {
     public class TokenService : ITokenService
     {
-        private readonly JwtConfig jwtConfig= EngineContext.Current.Resolve<JwtConfig>();
+        private readonly JwtConfig jwtConfig = EngineContext.Current.Resolve<JwtConfig>();
+        private CommonRepository<AspNetUserSecurityToken> _securityTokenRepository;
+        public TokenService()
+        {
+            this._securityTokenRepository = new CommonRepository<AspNetUserSecurityToken>(new AccountUnitOfWorkContext());
+        }
         public string GetAccessToken(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey));
@@ -32,7 +44,7 @@ namespace CLF.Service.Account
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false, 
+                ValidateAudience = false,
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
@@ -52,6 +64,33 @@ namespace CLF.Service.Account
         public string GetRefreshToken()
         {
             return RandomProvider.GenerateRandom();
+        }
+
+        public bool AddToken(AspNetUserSecurityTokenDTO model)
+        {
+            var securityToken = model.Map<AspNetUserSecurityToken>();
+            return _securityTokenRepository.Add(securityToken);
+        }
+
+        public bool ModifyToken(AspNetUserSecurityTokenDTO model)
+        {
+            Expression<Func<AspNetUserSecurityToken, bool>> expression = o => !o.IsDeleted;
+
+            if (!string.IsNullOrEmpty(model.ClientId))
+                expression = expression.And(o => o.ClientId == model.ClientId);
+
+            if(!string.IsNullOrEmpty(model.UserName))
+                expression = expression.And(o => o.UserName == model.UserName);
+
+            var securityToken = _securityTokenRepository.FindByFilter(expression);
+            return _securityTokenRepository.Modify(securityToken);
+        }
+
+        public AspNetUserSecurityTokenDTO GetAspNetUserSecurityToken(string userName, string refreshToken)
+        {
+            var data = _securityTokenRepository.FindByFilter(o => o.UserName == userName && o.RefreshToken == refreshToken
+                    && !o.IsDeleted && !o.IsRevoked);
+            return data.Map<AspNetUserSecurityTokenDTO>();
         }
     }
 }

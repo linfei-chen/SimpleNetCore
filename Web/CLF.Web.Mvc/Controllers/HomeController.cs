@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Web;
 using System.Text.Encodings.Web;
+using CLF.Web.Framework.Mvc;
 
 namespace CLF.Web.Mvc.Controllers
 {
