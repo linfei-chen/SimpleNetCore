@@ -81,7 +81,7 @@ namespace CLF.Web.Framework.Identity
             if (user == null)
                 return SignInStatus.NotFoundUser;
 
-            if (await userManager.IsEmailConfirmedAsync(user))
+            if (!await userManager.IsEmailConfirmedAsync(user))
                 return SignInStatus.InvalidEmail;
 
             if (await userManager.IsLockedOutAsync(user))

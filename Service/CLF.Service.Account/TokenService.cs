@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
@@ -44,11 +45,13 @@ namespace CLF.Service.Account
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,//过期也可以验证
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
-                ValidateLifetime = false //过期也可以验证
+                ValidAudience = jwtConfig.Issuer,
+                ValidIssuer = jwtConfig.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -79,11 +82,17 @@ namespace CLF.Service.Account
             if (!string.IsNullOrEmpty(model.ClientId))
                 expression = expression.And(o => o.ClientId == model.ClientId);
 
-            if(!string.IsNullOrEmpty(model.UserName))
+            if (!string.IsNullOrEmpty(model.UserName))
                 expression = expression.And(o => o.UserName == model.UserName);
 
-            var securityToken = _securityTokenRepository.FindByFilter(expression);
-            return _securityTokenRepository.Modify(securityToken);
+            var securityToken = _securityTokenRepository.Find(expression);
+            securityToken.ToList().ForEach(o =>
+            {
+                if (!string.IsNullOrEmpty(model.RefreshToken))
+                    o.RefreshToken = model.RefreshToken;
+                o.IsRevoked = model.IsRevoked;
+            });
+            return _securityTokenRepository.Modify(securityToken, new string[] { "RefreshToken", "IsRevoked" }) > 0;
         }
 
         public AspNetUserSecurityTokenDTO GetAspNetUserSecurityToken(string userName, string refreshToken)

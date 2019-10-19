@@ -21,7 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CLF.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : BaseApiController
     {
@@ -31,6 +31,12 @@ namespace CLF.WebApi.Controllers
             this._tokenService = tokenService;
         }
 
+        /// <summary>
+        /// jwt刷新token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult RefreshToken(string token, string refreshToken)
         {
@@ -51,7 +57,12 @@ namespace CLF.WebApi.Controllers
             return BadRequest();
         }
 
-        [ThrowIfException]
+        /// <summary>
+        /// 废除jwt refreshToken
+        /// </summary>
+        /// <returns></returns>
+        [ThrowIfException, Authorize]
+        [HttpPost]
         public IActionResult RevokeToken()
         {
             AspNetUserSecurityTokenDTO model = new AspNetUserSecurityTokenDTO

@@ -65,6 +65,8 @@ namespace CLF.Web.Framework.Infrastructure
             #region services
 
             builder.RegisterType<AccountService>().As<IAccountService>().InstancePerLifetimeScope();
+            builder.RegisterType<TokenService>().As<ITokenService>().InstancePerLifetimeScope();
+
             builder.RegisterType<EventPublisher>().As<IEventPublisher>().SingleInstance();
 
             #endregion

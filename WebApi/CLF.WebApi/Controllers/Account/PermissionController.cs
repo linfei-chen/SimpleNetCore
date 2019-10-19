@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CLF.Service.Account;
+using CLF.Web.Framework.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CLF.WebApi.Controllers.Account
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class PermissionController : Controller
+    public class PermissionController : BaseApiController
     {
         private readonly IAccountService _accountService;
         public PermissionController(IAccountService accountService)
@@ -28,10 +30,11 @@ namespace CLF.WebApi.Controllers.Account
         /// <param name="actionName">actionName</param>
         /// <returns>权限列表</returns>
         [HttpGet]
+        [Authorize]
         public ActionResult GetPermissions(string controllerName, string actionName, int start = 0, int length = 10)
         {
             var result = _accountService.FindPagenatedListWithCount(start, length, controllerName, actionName);
-            return Json(result);
+            return new ObjectResult(result);
         }
     }
 }

@@ -63,10 +63,13 @@ namespace CLF.Web.Mvc.Controllers
             result = await _applicationSignInManager.PasswordSignInAsync(model);
             switch (result.Key)
             {
+                case SignInStatus.NotFoundUser:
+                    ModelState.AddModelError("Email", "账户不存在！");
+                    break;
                 case SignInStatus.InvalidEmail:
                     ModelState.AddModelError("Email", "注册邮件尚未激活！");
                     break;
-                case SignInStatus.NotFoundUser:
+                case SignInStatus.IncorrectPassword:
                     ModelState.AddModelError("Email", "账户或密码错误，请重新输入！");
                     break;
                 case SignInStatus.LockedOut:
@@ -86,10 +89,10 @@ namespace CLF.Web.Mvc.Controllers
         }
 
         [AllowAnonymous]
-        //[AutoValidateAntiforgeryToken]
+        [AutoValidateAntiforgeryToken]
         [HttpPost]
         [ThrowIfException]
-        public async Task<ActionResult> Register([FromBody]RegisterDTO model)
+        public async Task<ActionResult> Register(RegisterDTO model)
         {
             if (ModelState.IsValid)
             {

@@ -232,8 +232,7 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ClockSkew = TimeSpan.FromSeconds(35),
-                        ValidAudience = jwtConfig.SecurityKey,
+                        ValidAudience = jwtConfig.Issuer,
                         ValidIssuer = jwtConfig.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
                     };
