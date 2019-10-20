@@ -82,35 +82,16 @@ namespace CLF.WebApi.Controllers.Account
         [AllowAnonymous]
         public async Task<ActionResult> Login(string userName, string password)
         {
-            var result = new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Failure, null);
-            SignInDTO model = new SignInDTO
-            {
-                UserName = userName,
-                Password = password
-            };
-            result = await _applicationSignInManager.PasswordSignInAsync(model);
-            switch (result.Key)
-            {
-                case SignInStatus.NotFoundUser:
-                    ModelState.AddModelError("Email", "账户不存在！");
-                    break;
-                case SignInStatus.InvalidEmail:
-                    ModelState.AddModelError("Email", "注册邮件尚未激活！");
-                    break;
-                case SignInStatus.IncorrectPassword:
-                    ModelState.AddModelError("Email", "账户或密码错误，请重新输入！");
-                    break;
-                case SignInStatus.LockedOut:
-                    ModelState.AddModelError("Email", "账户已被锁定，请稍后登陆！");
-                    break;
-            }
-            if(result.Key!=SignInStatus.Success)
-                return ThrowJsonMessage(false, GetModelStateErrorMessage());
+            var user = await _userManager.FindByNameAsync(userName);
+            var checkPassword = await  _userManager.CheckPasswordAsync(user, password);
+
+            if(!checkPassword)
+                return ThrowJsonMessage(false, "用户名或密码错误");
 
             //生成token
             var claims = new[]
              {
-                //new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
+                new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                 new Claim(ClaimTypes.Name, userName)
             };
 

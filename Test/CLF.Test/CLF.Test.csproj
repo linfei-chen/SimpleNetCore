@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\CLF.Common\CLF.Common.csproj" />
+    <ProjectReference Include="..\..\WebApi\CLF.WebApi\CLF.WebApi.csproj" />
     <ProjectReference Include="..\..\Web\CLF.Web.Mvc\CLF.Web.Mvc.csproj" />
   </ItemGroup>
 

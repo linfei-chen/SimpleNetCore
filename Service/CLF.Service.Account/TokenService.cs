@@ -47,7 +47,7 @@ namespace CLF.Service.Account
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = true,//过期也可以验证
+                ValidateLifetime = false,//过期也可以验证
                 ValidateIssuerSigningKey = true,
                 ValidAudience = jwtConfig.Issuer,
                 ValidIssuer = jwtConfig.Issuer,

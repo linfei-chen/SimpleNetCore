@@ -36,5 +36,12 @@ namespace CLF.WebApi.Controllers.Account
             var result = _accountService.FindPagenatedListWithCount(start, length, controllerName, actionName);
             return new ObjectResult(result);
         }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult GetPermissionById()
+        {
+            return Ok("ok!");
+        }
     }
 }
