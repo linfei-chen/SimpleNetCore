@@ -5,11 +5,11 @@
         var username = "chenlinfei929@126.com";
         var password = "qwert123"
 
-        $.post("http://localhost:57884/api/account/login?username=" + username + "&password=" + password).done(function (result) {
+        $.post("http://localhost:10086/api/account/login?username=" + username + "&password=" + password).done(function (result) {
             $.ajax({
                 type: 'get',
                 contentType: 'application/json',
-                url: 'http://localhost:57884/Permission/GetPermission',
+                url: 'http://localhost:10086/api/Permission/GetPermission',
                 beforeSend: function (xhr) {
                     if (result !== null) {
                         alert(result.token)

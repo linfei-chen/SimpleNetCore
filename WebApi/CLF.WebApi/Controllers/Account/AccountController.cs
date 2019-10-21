@@ -88,13 +88,8 @@ namespace CLF.WebApi.Controllers.Account
                 return ThrowJsonMessage(false, "用户名或密码错误");
 
             //生成token
-            var usersClaims = new[]
-            {
-                new Claim(ClaimTypes.Name, userName)
-            };
-
-            var token = _tokenService.GetAccessToken(usersClaims);
-            var refreshToken = _tokenService.GetRefreshToken();
+            var token = _tokenService.GenerateAccessToken(userName);
+            var refreshToken = _tokenService.GenerateRefreshToken();
 
             var securityToken = new AspNetUserSecurityTokenDTO
             {

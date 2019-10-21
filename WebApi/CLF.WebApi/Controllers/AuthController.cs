@@ -46,8 +46,8 @@ namespace CLF.WebApi.Controllers
             var aspNetUserSecurityToken = _tokenService.GetAspNetUserSecurityToken(username, refreshToken);
             if (aspNetUserSecurityToken == null) return BadRequest();
 
-            var newToken = _tokenService.GetAccessToken(principal.Claims);
-            var newRefreshToken = _tokenService.GetRefreshToken();
+            var newToken = _tokenService.GenerateAccessToken(username);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             aspNetUserSecurityToken.RefreshToken = newRefreshToken;
             var result = _tokenService.ModifyToken(aspNetUserSecurityToken);

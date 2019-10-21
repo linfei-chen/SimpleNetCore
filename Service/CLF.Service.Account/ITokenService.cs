@@ -8,8 +8,8 @@ namespace CLF.Service.Account
 {
     public interface ITokenService
     {
-        string GetAccessToken(IEnumerable<Claim> claims);
-        string GetRefreshToken();
+        string GenerateAccessToken(string userName);
+        string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 
         bool AddToken(AspNetUserSecurityTokenDTO model);

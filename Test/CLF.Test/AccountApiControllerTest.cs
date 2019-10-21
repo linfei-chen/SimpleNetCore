@@ -59,9 +59,9 @@ namespace CLF.Test
 
             var jsonData = JsonConvert.DeserializeObject<jwtResult>(data);
 
-            string testAPi = "api/permission/GetPermissionById";
+            string testAPi = "api/permission/GetPermission";
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jsonData.token);
-            var result1 = _client.PostAsJsonAsync(testAPi,"").Result;
+            var result1 = _client.GetAsync(testAPi).Result;
             var data1 = await result1.Content.ReadAsStringAsync();
             result.EnsureSuccessStatusCode();
         }

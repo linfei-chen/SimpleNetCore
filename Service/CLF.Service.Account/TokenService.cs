@@ -26,16 +26,22 @@ namespace CLF.Service.Account
         {
             this._securityTokenRepository = new CommonRepository<AspNetUserSecurityToken>(new AccountUnitOfWorkContext());
         }
-        public string GetAccessToken(IEnumerable<Claim> claims)
+        public string GenerateAccessToken(string userName)
         {
+            var usersClaims = new[]
+            {
+                 new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
+                 new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddMinutes(jwtConfig.ExpiredMinutes)).ToUnixTimeSeconds()}"),
+                 new Claim(ClaimTypes.Name, userName)
+            };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: jwtConfig.Issuer,
                 audience: jwtConfig.Issuer,
-                claims: claims,
+                claims: usersClaims,
                 notBefore: DateTime.Now,
-                expires: DateTime.Now.AddMinutes(jwtConfig.ExpireTime),
+                expires: DateTime.Now.AddMinutes(jwtConfig.ExpiredMinutes),
                 signingCredentials: signingCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -64,7 +70,7 @@ namespace CLF.Service.Account
             return principal;
         }
 
-        public string GetRefreshToken()
+        public string GenerateRefreshToken()
         {
             return RandomProvider.GenerateRandom();
         }
