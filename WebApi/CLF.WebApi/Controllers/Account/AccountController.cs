@@ -84,18 +84,16 @@ namespace CLF.WebApi.Controllers.Account
         {
             var user = await _userManager.FindByNameAsync(userName);
             var checkPassword = await  _userManager.CheckPasswordAsync(user, password);
-
             if(!checkPassword)
                 return ThrowJsonMessage(false, "用户名或密码错误");
 
             //生成token
-            var claims = new[]
-             {
-                new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
+            var usersClaims = new[]
+            {
                 new Claim(ClaimTypes.Name, userName)
             };
 
-            var token = _tokenService.GetAccessToken(claims);
+            var token = _tokenService.GetAccessToken(usersClaims);
             var refreshToken = _tokenService.GetRefreshToken();
 
             var securityToken = new AspNetUserSecurityTokenDTO
@@ -103,7 +101,6 @@ namespace CLF.WebApi.Controllers.Account
                 UserName = userName,
                 RefreshToken = refreshToken
             };
-
             var isSave = _tokenService.AddToken(securityToken);
             if (isSave)
                 return new ObjectResult(new { success = true, token = token, refreshToken = refreshToken });

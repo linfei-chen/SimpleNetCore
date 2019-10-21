@@ -37,9 +37,9 @@ namespace CLF.Web.Framework.Infrastructure
             {
                 cfg.TokenLifespan = TimeSpan.FromHours(3);//配置token过期时间
             });
-
             services.AddAppAuthentication(configuration);
             services.AddAppMvc();
+
         }
     }
 }

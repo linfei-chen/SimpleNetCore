@@ -35,6 +35,6 @@ namespace CLF.Common.Configuration
         /// <summary>
         /// 过期时间分钟
         /// </summary>
-        public int ExpireTime => 1;
+        public int ExpireTime => 5;
     }
 }

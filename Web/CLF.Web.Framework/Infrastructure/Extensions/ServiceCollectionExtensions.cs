@@ -120,7 +120,6 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                   options.Password.RequireUppercase = false;
                   options.Password.RequireNonAlphanumeric = false;
               })
-               .AddDefaultUI(UIFramework.Bootstrap4)
                //.AddDefaultTokenProviders()
                .AddEntityFrameworkStores<AccountContext>();
 
@@ -223,18 +222,22 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var jwtConfig = services.ConfigureStartupConfig<JwtConfig>(configuration.GetSection("Jwt"));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //绑定[Authorize]，否则报401
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过跳转到登录页，不存在登录页报404
+            })
+             .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidAudience = jwtConfig.Issuer,
                         ValidIssuer = jwtConfig.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
                     };
                     options.Events = new JwtBearerEvents
                     {

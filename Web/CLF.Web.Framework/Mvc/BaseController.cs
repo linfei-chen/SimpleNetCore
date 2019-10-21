@@ -19,7 +19,7 @@ namespace CLF.Web.Framework.Mvc
             return Json(result);
         }
 
-        public string GetModelStateErrorMessage()
+        protected string GetModelStateErrorMessage()
         {
             string message = string.Empty;
             foreach (var value in ModelState.Values.Where(o => o.Errors.Any()))
@@ -33,7 +33,7 @@ namespace CLF.Web.Framework.Mvc
             return message;
         }
 
-        public virtual JsonResult ThrowJsonMessage(bool success, string message = null)
+        protected virtual JsonResult ThrowJsonMessage(bool success, string message = null)
         {
             return Json(new ServiceResult<bool>(success ? ServiceResultType.Success : ServiceResultType.Error, message));
         }

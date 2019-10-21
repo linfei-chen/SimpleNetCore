@@ -1,0 +1,28 @@
+﻿<script src="~/jquery-1.10.2.js"></script>
+
+<script>
+    $(function () {
+        var username = "chenlinfei929@126.com";
+        var password = "qwert123"
+
+        $.post("http://localhost:57884/api/account/login?username=" + username + "&password=" + password).done(function (result) {
+            $.ajax({
+                type: 'get',
+                contentType: 'application/json',
+                url: 'http://localhost:57884/Permission/GetPermission',
+                beforeSend: function (xhr) {
+                    if (result !== null) {
+                        alert(result.token)
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + result.token);
+                    }
+                },
+                success: function (data) {
+                    alert(data);
+                },
+                error: function (xhr) {
+                    alert(xhr.status);
+                }
+            });
+        });
+    });
+</script>

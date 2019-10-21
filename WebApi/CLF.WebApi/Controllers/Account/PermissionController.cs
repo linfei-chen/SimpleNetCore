@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CLF.WebApi.Controllers.Account
 {
-    [Produces("application/json")]
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class PermissionController : BaseApiController
+    //[Produces("application/json")]
+    //[Route("api/[controller]/[action]")]
+    //[ApiController]
+    public class PermissionController : BaseController
     {
         private readonly IAccountService _accountService;
         public PermissionController(IAccountService accountService)
@@ -37,9 +37,9 @@ namespace CLF.WebApi.Controllers.Account
             return new ObjectResult(result);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
-        public ActionResult GetPermissionById()
+        public ActionResult GetPermission()
         {
             return Ok("ok!");
         }
