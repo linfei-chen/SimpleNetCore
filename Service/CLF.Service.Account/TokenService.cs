@@ -22,9 +22,9 @@ namespace CLF.Service.Account
     {
         private readonly JwtConfig jwtConfig = EngineContext.Current.Resolve<JwtConfig>();
         private CommonRepository<AspNetUserSecurityToken> _securityTokenRepository;
-        public TokenService()
+        public TokenService(CommonRepository<AspNetUserSecurityToken> securityTokenRepository)
         {
-            this._securityTokenRepository = new CommonRepository<AspNetUserSecurityToken>(new AccountUnitOfWorkContext());
+            this._securityTokenRepository = securityTokenRepository;
         }
         public string GenerateAccessToken(string userName)
         {

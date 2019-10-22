@@ -40,10 +40,11 @@ namespace CLF.Web.Framework.Infrastructure
 
             #region repositories
 
-
             builder.Register(context => new PermissionRepository(context.ResolveNamed<EFUnitOfWorkContextBase>("AccountUnitOfWorkContext")))
                 .AsSelf().InstancePerLifetimeScope();
 
+            builder.Register(context => new CommonRepository<AspNetUserSecurityToken>(context.ResolveNamed<EFUnitOfWorkContextBase>("AccountUnitOfWorkContext")))
+                .AsSelf().InstancePerLifetimeScope();
 
             #endregion
 
