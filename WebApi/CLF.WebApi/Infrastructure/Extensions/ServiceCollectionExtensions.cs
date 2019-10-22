@@ -34,6 +34,19 @@ namespace CLF.WebApi.Infrastructure.Extensions
                     }
                 });
 
+                //请求时头部加入token
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                {
+                    Description = "Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", new string[] { } }
+                });
+
                 //设置xml文档注释路径
                 var basePath = Path.GetDirectoryName(typeof(CLF.WebApi.Program).Assembly.Location);
                 var xmlPath = Path.Combine(basePath, "Swagger.xml");

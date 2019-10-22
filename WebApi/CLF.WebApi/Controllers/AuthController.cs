@@ -52,7 +52,7 @@ namespace CLF.WebApi.Controllers
             aspNetUserSecurityToken.RefreshToken = newRefreshToken;
             var result = _tokenService.ModifyToken(aspNetUserSecurityToken);
             if (result)
-                return new ObjectResult(new { success = true, token = token, refreshToken = refreshToken });
+                return new ObjectResult(new { success = true, token = newToken, refreshToken = newRefreshToken });
 
             return BadRequest();
         }

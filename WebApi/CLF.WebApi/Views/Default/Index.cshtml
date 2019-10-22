@@ -21,7 +21,12 @@
                 },
                 error: function (xhr) {
                     alert(xhr.status);
+                },
+                complete: function (xhr, data) {
+                    var tokenExpired = xhr.getResponseHeader('Token-Expired');
+                    return tokenExpired;
                 }
+
             });
         });
     });

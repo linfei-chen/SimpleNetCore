@@ -225,19 +225,20 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //绑定[Authorize]，否则报401
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过跳转到登录页，不存在登录页报404
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过防止重定向到登录页，而是显示401
             })
              .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidAudience = jwtConfig.Issuer,
+                        ValidateIssuer = true,
                         ValidIssuer = jwtConfig.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = jwtConfig.Issuer,
+                        ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
+                        ValidateLifetime = true,
+                        ClockSkew=TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
                     };
                     options.Events = new JwtBearerEvents
                     {
