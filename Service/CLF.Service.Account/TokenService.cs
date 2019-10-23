@@ -82,10 +82,14 @@ namespace CLF.Service.Account
         public string GenerateRefreshToken() 
             => RandomProvider.GenerateRandom();
 
-        public async Task GetAccessTokenFromCache()
+        public async Task<bool> ValidateAccessTokenWithCache()
         {
+            if (string.IsNullOrEmpty(GetCurrentToken()))
+                return true;
+
             var key = GetKey(GetCurrentToken());
-            await _staticCacheManager.GetAsync(key, () => Task.FromResult(string.Empty));
+            var cacheToken = await _staticCacheManager.GetAsync(key, () => Task.FromResult<string>(null),0);
+            return !string.IsNullOrEmpty(cacheToken);
         }
 
         public void SetAccessTokenToCache(string token)

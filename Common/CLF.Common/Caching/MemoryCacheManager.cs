@@ -19,20 +19,31 @@ namespace CLF.Common.Caching
 
         public T Get<T>(string key, Func<T> acquire, int? cacheTime = null)
         {
-            if (cacheTime <= 0)
-                return acquire();
+            if (_provider.Exists(key))
+            {
+                return _provider.Get<T>(key).Value;
+            }
 
-            return _provider.Get(key, acquire, TimeSpan.FromMinutes(cacheTime ?? CachingDefaultSettings.CacheTime))
-                .Value;
+            if ((cacheTime ?? CachingDefaultSettings.CacheTime) > 0)
+            {
+                _provider.Set(key, acquire, TimeSpan.FromMinutes(cacheTime ?? CachingDefaultSettings.CacheTime));
+            }
+            return acquire();
         }
 
         public async Task<T> GetAsync<T>(string key, Func<Task<T>> acquire, int? cacheTime = null)
         {
-            if (cacheTime <= 0)
-                return await acquire();
+            if (await _provider.ExistsAsync(key))
+            {
+                return (await _provider.GetAsync<T>(key)).Value;
+            }
 
-            var t = await _provider.GetAsync(key, acquire, TimeSpan.FromMinutes(cacheTime ?? CachingDefaultSettings.CacheTime));
-            return t.Value;
+            if ((cacheTime ?? CachingDefaultSettings.CacheTime) > 0)
+            {
+                 await _provider.SetAsync(key, acquire, TimeSpan.FromMinutes(cacheTime ?? CachingDefaultSettings.CacheTime));
+            }
+
+            return await acquire();
         }
 
         public void Set(string key, object data, int cacheTime)

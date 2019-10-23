@@ -12,7 +12,7 @@ namespace CLF.Service.Account
         string GenerateAccessToken(string userName);
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-        Task GetAccessTokenFromCache();
+        Task<bool> ValidateAccessTokenWithCache();
         void SetAccessTokenToCache(string token);
         void RemoveAccessTokenFromCache(string token);
 

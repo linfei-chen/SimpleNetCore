@@ -53,7 +53,8 @@ namespace CLF.WebApi.Controllers
             var result = _tokenService.ModifyToken(aspNetUserSecurityToken);
             if (result)
             {
-                _tokenService.SetAccessTokenToCache(newToken);//缓存token
+                _tokenService.RemoveAccessTokenFromCache(token);//清除缓存旧token
+                _tokenService.SetAccessTokenToCache(newToken);//缓存新的token
                 return new ObjectResult(new { success = true, token = newToken, refreshToken = newRefreshToken });
             }
             return BadRequest();
@@ -74,17 +75,6 @@ namespace CLF.WebApi.Controllers
             };
             var result = _tokenService.ModifyToken(model);
             return ThrowJsonMessage(result);
-        }
-
-        /// <summary>
-        ///  清除缓存中当前请求头部中的token
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult  CancelToken()
-        {
-            _tokenService.CancelAccessToken();
-            return Ok();
         }
     }
 }

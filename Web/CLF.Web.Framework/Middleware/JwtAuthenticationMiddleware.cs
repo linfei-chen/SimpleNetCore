@@ -22,8 +22,8 @@ namespace CLF.Web.Framework.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            var token = await  _tokenService.GetAccessTokenFromCache();
-            if (string.IsNullOrEmpty(token))
+            var valid = await  _tokenService.ValidateAccessTokenWithCache();
+            if (valid)
             {
                 await _next(context);
                 return;
