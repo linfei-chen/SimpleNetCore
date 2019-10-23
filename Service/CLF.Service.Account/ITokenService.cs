@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CLF.Service.Account
 {
@@ -11,6 +12,9 @@ namespace CLF.Service.Account
         string GenerateAccessToken(string userName);
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        Task GetAccessTokenFromCache();
+        void SetAccessTokenToCache(string token);
+        void RemoveAccessTokenFromCache(string token);
 
         bool AddToken(AspNetUserSecurityTokenDTO model);
         bool ModifyToken(AspNetUserSecurityTokenDTO model);

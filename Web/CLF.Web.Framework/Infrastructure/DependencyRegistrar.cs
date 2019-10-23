@@ -15,6 +15,8 @@ using CLF.Service.Core.Events;
 using CLF.Service.Core.Messages;
 using CLF.Web.Framework.Identity;
 using CLF.Web.Framework.Identity.Providers;
+using CLF.Web.Framework.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;

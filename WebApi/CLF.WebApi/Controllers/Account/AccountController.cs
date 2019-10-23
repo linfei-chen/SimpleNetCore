@@ -98,7 +98,10 @@ namespace CLF.WebApi.Controllers.Account
             };
             var isSave = _tokenService.AddToken(securityToken);
             if (isSave)
+            {
+                _tokenService.SetAccessTokenToCache(token);//缓存token
                 return new ObjectResult(new { success = true, token = token, refreshToken = refreshToken });
+            }
 
             return BadRequest();
         }

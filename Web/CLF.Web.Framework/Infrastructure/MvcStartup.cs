@@ -7,6 +7,7 @@ using CLF.Model.Account;
 using System;
 using Microsoft.AspNetCore.Identity;
 using CLF.DataAccess.Account;
+using CLF.Web.Framework.Middleware;
 
 namespace CLF.Web.Framework.Infrastructure
 {
@@ -21,6 +22,7 @@ namespace CLF.Web.Framework.Infrastructure
             application.UseCookiePolicy();
 
             application.UseAuthentication();
+            application.UseMiddleware<JwtAuthenticationMiddleware>();
 
             application.UseMvc(routes =>
             {

@@ -1,4 +1,5 @@
-﻿using CLF.Common.Configuration;
+﻿using CLF.Common.Caching;
+using CLF.Common.Configuration;
 using CLF.Common.Extensions;
 using CLF.Common.Infrastructure;
 using CLF.Common.SecurityHelper;
@@ -7,6 +8,8 @@ using CLF.Domain.Core.EFRepository;
 using CLF.Model.Account;
 using CLF.Service.Core.Extensions;
 using CLF.Service.DTO.Account;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -15,16 +18,22 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CLF.Service.Account
 {
     public class TokenService : ITokenService
     {
         private readonly JwtConfig jwtConfig = EngineContext.Current.Resolve<JwtConfig>();
-        private CommonRepository<AspNetUserSecurityToken> _securityTokenRepository;
-        public TokenService(CommonRepository<AspNetUserSecurityToken> securityTokenRepository)
+        private readonly CommonRepository<AspNetUserSecurityToken> _securityTokenRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IStaticCacheManager _staticCacheManager;
+      
+        public TokenService(CommonRepository<AspNetUserSecurityToken> securityTokenRepository,IHttpContextAccessor httpContextAccessor,IStaticCacheManager staticCacheManager)
         {
             this._securityTokenRepository = securityTokenRepository;
+            this._httpContextAccessor = httpContextAccessor;
+            this._staticCacheManager = staticCacheManager;
         }
         public string GenerateAccessToken(string userName)
         {
@@ -70,9 +79,25 @@ namespace CLF.Service.Account
             return principal;
         }
 
-        public string GenerateRefreshToken()
+        public string GenerateRefreshToken() 
+            => RandomProvider.GenerateRandom();
+
+        public async Task GetAccessTokenFromCache()
         {
-            return RandomProvider.GenerateRandom();
+            var key = GetKey(GetCurrentToken());
+            await _staticCacheManager.GetAsync(key, () => Task.FromResult(string.Empty));
+        }
+
+        public void SetAccessTokenToCache(string token)
+        {
+            var key = GetKey(token);
+            _staticCacheManager.Set(key, token, jwtConfig.ExpiredMinutes);
+        }
+
+        public void RemoveAccessTokenFromCache(string token)
+        {
+            var key = GetKey(token);
+            _staticCacheManager.Remove(key);
         }
 
         public bool AddToken(AspNetUserSecurityTokenDTO model)
@@ -107,5 +132,16 @@ namespace CLF.Service.Account
                     && !o.IsDeleted && !o.IsRevoked);
             return data.Map<AspNetUserSecurityTokenDTO>();
         }
+
+        private string GetCurrentToken()
+        {
+            var authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["authorization"];
+            return authorizationHeader == StringValues.Empty
+                ? string.Empty
+                : authorizationHeader.Single().Split(" ").Last();
+        }
+
+        private static string GetKey(string token)
+            => string.Format(AccountServiceDefaults.JwtTokenCacheKey, token);
     }
 }
