@@ -92,16 +92,27 @@ namespace CLF.Service.Account
             return !string.IsNullOrEmpty(cacheToken);
         }
 
-        public void SetAccessTokenToCache(string token)
+        /// <summary>
+        /// 用于登录时缓存用户的jwtToken，同时删除该用户缓存的旧jwtToken
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="token"></param>
+        public void SetAccessTokenToCache(string userName,string token)
         {
-            var key = GetKey(token);
-            _staticCacheManager.Set(key, token, jwtConfig.ExpiredMinutes);
-        }
+            var userNameKey = GetKey(userName);
+            var tokenKey = GetKey(token);
 
-        public void RemoveAccessTokenFromCache(string token)
-        {
-            var key = GetKey(token);
-            _staticCacheManager.Remove(key);
+            var cacheOldToken =  _staticCacheManager.GetAsync(userNameKey, () => Task.FromResult<string>(null), 0).Result;
+            if (!string.IsNullOrEmpty(cacheOldToken))
+            {
+                var oldTokenKey = GetKey(cacheOldToken);
+                _staticCacheManager.Remove(oldTokenKey);
+            }
+
+            _staticCacheManager.Remove(userNameKey);
+
+            _staticCacheManager.Set(userNameKey, token, jwtConfig.ExpiredMinutes);
+            _staticCacheManager.Set(tokenKey, token, jwtConfig.ExpiredMinutes);
         }
 
         public bool AddToken(AspNetUserSecurityTokenDTO model)
@@ -145,7 +156,7 @@ namespace CLF.Service.Account
                 : authorizationHeader.Single().Split(" ").Last();
         }
 
-        private static string GetKey(string token)
-            => string.Format(AccountServiceDefaults.JwtTokenCacheKey, token);
+        private static string GetKey(string key)
+            => string.Format(AccountServiceDefaults.JwtTokenCacheKey, key);
     }
 }

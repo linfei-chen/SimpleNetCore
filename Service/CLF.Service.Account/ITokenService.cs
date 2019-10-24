@@ -13,9 +13,7 @@ namespace CLF.Service.Account
         string GenerateRefreshToken();
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<bool> ValidateAccessTokenWithCache();
-        void SetAccessTokenToCache(string token);
-        void RemoveAccessTokenFromCache(string token);
-
+        void SetAccessTokenToCache(string userName, string token);
         bool AddToken(AspNetUserSecurityTokenDTO model);
         bool ModifyToken(AspNetUserSecurityTokenDTO model);
 
