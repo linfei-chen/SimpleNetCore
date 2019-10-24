@@ -238,13 +238,13 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
                         ValidateLifetime = true,
-                        ClockSkew=TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
+                        ClockSkew = TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
                     };
                     options.Events = new JwtBearerEvents
                     {
                         OnAuthenticationFailed = context =>
                         {
-                            if(context.Exception.GetType()==typeof(SecurityTokenExpiredException))
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                             {
                                 context.Response.Headers.Add("Token-Expired", "true");
                             }

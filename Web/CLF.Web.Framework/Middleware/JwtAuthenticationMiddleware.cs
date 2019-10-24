@@ -1,4 +1,5 @@
 ﻿using CLF.Service.Account;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
@@ -15,7 +16,7 @@ namespace CLF.Web.Framework.Middleware
         private readonly RequestDelegate _next;
         private readonly ITokenService _tokenService;
 
-        public JwtAuthenticationMiddleware(ITokenService tokenService, RequestDelegate next)
+        public JwtAuthenticationMiddleware(ITokenService tokenService,RequestDelegate next)
         {
             this._tokenService = tokenService;
             _next = next ?? throw new ArgumentNullException(nameof(next));
