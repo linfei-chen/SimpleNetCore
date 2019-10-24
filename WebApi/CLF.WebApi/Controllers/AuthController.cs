@@ -38,24 +38,31 @@ namespace CLF.WebApi.Controllers
         /// <param name="refreshToken"></param>
         /// <returns></returns>
         [HttpPost]
+        [ThrowIfException]
         public IActionResult RefreshToken(string token, string refreshToken)
         {
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token);
-            var username = principal.Identity.Name;
-
-            var aspNetUserSecurityToken = _tokenService.GetAspNetUserSecurityToken(username, refreshToken);
-            if (aspNetUserSecurityToken == null) return BadRequest();
-
-            var newToken = _tokenService.GenerateAccessToken(username);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
-
-            aspNetUserSecurityToken.RefreshToken = newRefreshToken;
-            var result = _tokenService.ModifyToken(aspNetUserSecurityToken);
-            if (result)
+            if(!string.IsNullOrEmpty(token)&&!string.IsNullOrEmpty(refreshToken))
             {
-                return new ObjectResult(new { success = true, token = newToken, refreshToken = newRefreshToken });
+                var principal = _tokenService.GetPrincipalFromExpiredToken(token);
+                var username = principal.Identity.Name;
+
+                var aspNetUserSecurityToken = _tokenService.GetAspNetUserSecurityToken(username, refreshToken);
+                if (aspNetUserSecurityToken == null)
+                    return ThrowJsonMessage(false, $"{nameof(refreshToken)}不存在");
+
+                var newToken = _tokenService.GenerateAccessToken(username);
+                var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+                aspNetUserSecurityToken.RefreshToken = newRefreshToken;
+                var result = _tokenService.ModifyToken(aspNetUserSecurityToken);
+                if (result)
+                {
+                    _tokenService.SetAccessTokenToCache(username, newToken); //缓存Token
+                    return new ObjectResult(new { success = true, token = newToken, refreshToken = newRefreshToken });
+                }
+                return ThrowJsonMessage(false, $"更新{nameof(refreshToken)}失败");
             }
-            return BadRequest();
+            return ThrowJsonMessage(false, $"{nameof(token)}或{nameof(refreshToken)}不能为空");
         }
 
         /// <summary>

@@ -24,6 +24,7 @@ namespace CLF.Web.Framework.Middleware
         public async Task Invoke(HttpContext context)
         {
             var valid = await  _tokenService.ValidateAccessTokenWithCache();
+            
             if (valid)
             {
                 await _next(context);
