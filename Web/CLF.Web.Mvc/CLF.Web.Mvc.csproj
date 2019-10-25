@@ -28,4 +28,7 @@
     <ProjectReference Include="..\CLF.Web.Framework\CLF.Web.Framework.csproj" />
   </ItemGroup>
 
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

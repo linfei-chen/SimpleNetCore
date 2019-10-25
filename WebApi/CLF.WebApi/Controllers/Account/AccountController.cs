@@ -1,4 +1,5 @@
-﻿using CLF.Model.Account;
+﻿using CLF.DataAccess.Account;
+using CLF.Model.Account;
 using CLF.Service.Account;
 using CLF.Service.Core.Messages;
 using CLF.Service.DTO.Account;
@@ -121,6 +122,21 @@ namespace CLF.WebApi.Controllers.Account
                 return ThrowJsonMessage(false, "发送邮件失败");
             }
             return ThrowJsonMessage(false, $"{nameof(email)}或{nameof(code)}不能为空");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult   InitAcccountDatabase()
+        {
+            try
+            {
+                DatabaseInitializer.Initialize();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }
