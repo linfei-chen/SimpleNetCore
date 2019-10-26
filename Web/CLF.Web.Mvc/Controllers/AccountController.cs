@@ -20,13 +20,13 @@ using CLF.Web.Framework.Mvc;
 
 namespace CLF.Web.Mvc.Controllers
 {
-    public class HomeController : BaseController
+    public class AccountController : BaseController
     {
         private ApplicationSignInManager _applicationSignInManager;
         private UserManager<AspNetUsers> _userManager;
         private IAccountService _accountService;
         private IEmailSender _emailSender;
-        public HomeController(IEmailSender emailSender, IAccountService accountService, UserManager<AspNetUsers> userManager, ApplicationSignInManager applicationSignInManager)
+        public AccountController(IEmailSender emailSender, IAccountService accountService, UserManager<AspNetUsers> userManager, ApplicationSignInManager applicationSignInManager)
         {
             this._emailSender = emailSender;
             this._userManager = userManager;
@@ -49,7 +49,7 @@ namespace CLF.Web.Mvc.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ThrowIfException]
-        public async Task<ActionResult> Login(SignInDTO model, string returnUrl)
+        public async Task<ActionResult> Login([FromBody]SignInDTO model, string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
                 return ThrowJsonMessage(false);
@@ -61,6 +61,8 @@ namespace CLF.Web.Mvc.Controllers
 
             var result = new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Failure, null);
             result = await _applicationSignInManager.PasswordSignInAsync(model);
+            var phone = CurrentUserPhone;
+            var username = CurrentUserName;
             switch (result.Key)
             {
                 case SignInStatus.NotFoundUser:
@@ -102,7 +104,7 @@ namespace CLF.Web.Mvc.Controllers
                     AspNetUsers user = result.Value;
                     //发送验证邮件
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { email = user.Email, code = HttpUtility.UrlEncode(code) }, Request.Scheme,Request.Host.Host);
+                    var callbackUrl = Url.Action(nameof(AccountController.ConfirmEmail), "Account", new { email = user.Email, code = HttpUtility.UrlEncode(code) }, Request.Scheme,Request.Host.Host);
                     EmailMessage emailMessage = new EmailMessage
                     {
                         Subject = "注册激活",

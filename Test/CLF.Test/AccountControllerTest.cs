@@ -42,7 +42,7 @@ namespace CLF.Test
         {
             try
             {
-                string action = "/home/register";
+                string action = "/account/register";
                 RegisterDTO model = new RegisterDTO
                 {
                     Email = "chenlinfei929@126.com",
@@ -67,11 +67,11 @@ namespace CLF.Test
         [Fact]
         public async void Test_Login()
         {
-            string action = "/home/login?returnUrl=http://localhost:50995/";
+            string action = "/account/login?returnUrl=http://localhost:50995/";
             SignInDTO model = new SignInDTO
             {
                 UserName = "chenlinfei929@126.com",
-                Password = "qwert123"
+                Password = "qwert123",
             };
             var result = await _client.PostAsJsonAsync(action, model);
             result.EnsureSuccessStatusCode();
@@ -84,7 +84,7 @@ namespace CLF.Test
         {
             string email = "chenlinfei929@126.com";
             string code = "CfDJ8EKIY007RwJBqalOXafqxSLF8mX%252bPXKWTsEJomeeVkGha3BXHH9bS0Ki3YflGKfeg8vtj64P2dOOtiigAKqZzs%252f9xbaTwDctB5okDC%252bCm1%252bSX0NIHuHtpPVWaYmnOcnk05vmht9l8Hz5jXRhdXeY%252fVZhKRZ4gtVtOdfzyhAhOHmO56vXthaBssQ7NNgUEBOZt1O1IuQLYrNTZowsKaogu%252fu3k6HEYQbY9PSs63w2J6AM%252bDLHUrv9lxtmjjWAXnqhmg%253d%253d";
-            string action = "/home/confirmEmail?email=" + email + "&code=" + code;
+            string action = "/account/confirmEmail?email=" + email + "&code=" + code;
             var result = await _client.GetAsync(action);
             result.EnsureSuccessStatusCode();
 
@@ -94,7 +94,7 @@ namespace CLF.Test
         public async void Test_GenerateUserTokenAsync()
         {
             string email = "chenlinfei929@126.com";
-            string action = "/home/generateUserTokenAsync?email="+email;
+            string action = "/account/generateUserTokenAsync?email="+email;
             var result = await _client.GetAsync(action);
             result.EnsureSuccessStatusCode();
 

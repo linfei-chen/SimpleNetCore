@@ -1,6 +1,7 @@
 ﻿using CLF.Model.Account;
 using CLF.Service.DTO.Account;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -61,7 +62,7 @@ namespace CLF.Web.Framework.Identity
                     await base.RememberTwoFactorClientAsync(user);
                 else
                     await base.SignInAsync(user, isPersistent);
-
+    
                 return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Success, user);
             }
 
@@ -74,6 +75,27 @@ namespace CLF.Web.Framework.Identity
                 }
             }
             return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.IncorrectPassword, user);
+        }
+
+        public async Task SignInAsync(AspNetUsers user, bool isPersistent)
+        {
+            var userPrincipal = await CreateUserPrincipalAsync(user);
+            GetClaimsIdentity(user, userPrincipal.Identities.First());
+            var authenticationProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties { IsPersistent = isPersistent };
+            await Context.SignInAsync(IdentityConstants.ApplicationScheme, userPrincipal, authenticationProperties);
+        }
+
+        private static ClaimsIdentity GetClaimsIdentity(AspNetUsers user, ClaimsIdentity userIdentity)
+        {
+            if (!string.IsNullOrEmpty(user.Id))
+                userIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            if (!string.IsNullOrEmpty(user.UserName))
+                userIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+            if (!string.IsNullOrEmpty(user.Email))
+                userIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+            if (!string.IsNullOrEmpty(user.PhoneNumber))
+                userIdentity.AddClaim(new Claim(ClaimTypes.MobilePhone, user.Id));
+            return userIdentity;
         }
 
         private async Task<SignInStatus> CheckUserStatusAsync(UserManager<AspNetUsers> userManager, AspNetUsers user)
