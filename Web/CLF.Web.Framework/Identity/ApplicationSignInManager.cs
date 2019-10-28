@@ -3,7 +3,6 @@ using CLF.Service.DTO.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -61,8 +60,9 @@ namespace CLF.Web.Framework.Identity
                 if (model.RememberMe)
                     await base.RememberTwoFactorClientAsync(user);
                 else
-                    await base.SignInAsync(user, isPersistent);
-    
+                    await this.SignInAsync(user, isPersistent);
+
+                var users=base.Context.User;
                 return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Success, user);
             }
 
@@ -79,23 +79,27 @@ namespace CLF.Web.Framework.Identity
 
         public async Task SignInAsync(AspNetUsers user, bool isPersistent)
         {
-            var userPrincipal = await CreateUserPrincipalAsync(user);
-            GetClaimsIdentity(user, userPrincipal.Identities.First());
-            var authenticationProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties { IsPersistent = isPersistent };
-            await Context.SignInAsync(IdentityConstants.ApplicationScheme, userPrincipal, authenticationProperties);
+            var identity = new ClaimsIdentity(GetClaimsIdentity(user), CookieAuthenticationDefaults.AuthenticationScheme);
+            var authenticationProperties = new AuthenticationProperties
+            {
+                IsPersistent = isPersistent,
+                ExpiresUtc = isPersistent ? DateTime.Now.AddDays(3) : DateTime.Now.AddHours(8)
+            };
+            await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), authenticationProperties);
         }
 
-        private static ClaimsIdentity GetClaimsIdentity(AspNetUsers user, ClaimsIdentity userIdentity)
+        private static IEnumerable<Claim> GetClaimsIdentity(AspNetUsers user)
         {
+            var userClaims = new List<Claim>();
             if (!string.IsNullOrEmpty(user.Id))
-                userIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                userClaims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             if (!string.IsNullOrEmpty(user.UserName))
-                userIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                userClaims.Add(new Claim(ClaimTypes.Name, user.UserName));
             if (!string.IsNullOrEmpty(user.Email))
-                userIdentity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+                userClaims.Add(new Claim(ClaimTypes.Email, user.Email));
             if (!string.IsNullOrEmpty(user.PhoneNumber))
-                userIdentity.AddClaim(new Claim(ClaimTypes.MobilePhone, user.Id));
-            return userIdentity;
+                userClaims.Add(new Claim(ClaimTypes.MobilePhone, user.PhoneNumber));
+            return userClaims;
         }
 
         private async Task<SignInStatus> CheckUserStatusAsync(UserManager<AspNetUsers> userManager, AspNetUsers user)

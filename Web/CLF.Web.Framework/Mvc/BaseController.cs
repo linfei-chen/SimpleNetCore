@@ -69,9 +69,9 @@ namespace CLF.Web.Framework.Mvc
         {
             get
             {
-                if (Identity != null && Identity.FindFirst(ClaimTypes.AuthenticationMethod) != null)
+                if (Identity != null && Identity.FindFirst(ClaimTypes.Name) != null)
                 {
-                    return Identity.FindFirst(ClaimTypes.AuthenticationMethod).Value;
+                    return Identity.FindFirst(ClaimTypes.Name).Value;
                 }
                 return string.Empty;
             }

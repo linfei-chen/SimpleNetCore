@@ -7,6 +7,7 @@ using CLF.Web.Framework.Identity.Providers;
 using CLF.Web.Framework.Mvc.Filters;
 using EasyCaching.Core;
 using EasyCaching.InMemory;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -224,34 +225,41 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
 
             services.AddAuthentication(options =>
             {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //绑定[Authorize]，否则报401
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过防止重定向到登录页，而是显示401
+
             })
-             .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtConfig.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = jwtConfig.Issuer,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnAuthenticationFailed = context =>
-                        {
-                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                            {
-                                context.Response.Headers.Add("Token-Expired", "true");
-                            }
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.LoginPath = new PathString("/account/login");
+            });
+            // //.AddJwtBearer(options =>
+            // //   {
+            // //       options.TokenValidationParameters = new TokenValidationParameters
+            // //       {
+            // //           ValidateIssuer = true,
+            // //           ValidIssuer = jwtConfig.Issuer,
+            // //           ValidateAudience = true,
+            // //           ValidAudience = jwtConfig.Issuer,
+            // //           ValidateIssuerSigningKey = true,
+            // //           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
+            // //           ValidateLifetime = true,
+            // //           ClockSkew = TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
+            // //       };
+            // //       options.Events = new JwtBearerEvents
+            // //       {
+            // //           OnAuthenticationFailed = context =>
+            // //           {
+            // //               if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            // //               {
+            // //                   context.Response.Headers.Add("Token-Expired", "true");
+            // //               }
+            // //               return Task.CompletedTask;
+            // //           }
+            // //       };
+            // //   })
         }
 
         public static TConfig ConfigureStartupConfig<TConfig>(this IServiceCollection services, IConfiguration configuration) where TConfig : class, new()
