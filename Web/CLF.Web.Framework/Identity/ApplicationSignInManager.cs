@@ -56,7 +56,7 @@ namespace CLF.Web.Framework.Identity
             if (await UserManager.CheckPasswordAsync(user, model.Password))
             {
                 await UserManager.ResetAccessFailedCountAsync(user);
-
+                
                 await this.SignInAsync(user, model.RememberMe);
                 return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Success, user);
             }
@@ -78,7 +78,7 @@ namespace CLF.Web.Framework.Identity
             var authenticationProperties = new AuthenticationProperties
             {
                 IsPersistent = isPersistent,
-                ExpiresUtc = isPersistent ? DateTime.Now.AddDays(3) : DateTime.Now.AddHours(8)
+                ExpiresUtc = isPersistent ? DateTime.Now.AddDays(3) : DateTime.Now.AddHours(2)
             };
             await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), authenticationProperties);
         }
