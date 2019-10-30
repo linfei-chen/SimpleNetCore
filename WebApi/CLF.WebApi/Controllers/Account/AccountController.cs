@@ -126,17 +126,11 @@ namespace CLF.WebApi.Controllers.Account
 
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult   InitAcccountDatabase()
+        [ThrowIfException]
+        public ActionResult InitAcccountDatabase()
         {
-            try
-            {
-                DatabaseInitializer.Initialize();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
+            DatabaseInitializer.Initialize();
+            return Ok("数据库生成成功!");
         }
     }
 }
