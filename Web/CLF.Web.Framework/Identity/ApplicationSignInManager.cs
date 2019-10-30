@@ -43,7 +43,7 @@ namespace CLF.Web.Framework.Identity
         /// <param name="isPersistent"></param>
         /// <param name="shouldLockout"></param>
         /// <returns></returns>
-        public async Task<KeyValuePair<SignInStatus, AspNetUsers>> PasswordSignInAsync(SignInDTO model, bool isPersistent = false, bool shouldLockout = false)
+        public async Task<KeyValuePair<SignInStatus, AspNetUsers>> PasswordSignInAsync(SignInDTO model, bool shouldLockout = false)
         {
             AspNetUsers user = await UserManager.FindByEmailAsync(model.UserName);
             if (user == null)
@@ -57,12 +57,7 @@ namespace CLF.Web.Framework.Identity
             {
                 await UserManager.ResetAccessFailedCountAsync(user);
 
-                if (model.RememberMe)
-                    await base.RememberTwoFactorClientAsync(user);
-                else
-                    await this.SignInAsync(user, isPersistent);
-
-                var users=base.Context.User;
+                await this.SignInAsync(user, model.RememberMe);
                 return new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Success, user);
             }
 

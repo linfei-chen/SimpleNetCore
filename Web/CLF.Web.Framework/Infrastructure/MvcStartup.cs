@@ -41,7 +41,6 @@ namespace CLF.Web.Framework.Infrastructure
             });
             services.AddAppAuthentication(configuration);
             services.AddAppMvc();
-
         }
     }
 }

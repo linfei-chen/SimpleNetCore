@@ -36,6 +36,9 @@ namespace CLF.Web.Mvc.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.UserIsAuthenticated = HttpContext.User.Identity.IsAuthenticated;
+            ViewBag.CurrnetUserName = CurrentUserName;
+            ViewBag.CurrentUserPhone = CurrentUserPhone;
             return View();
         }
 
@@ -49,7 +52,7 @@ namespace CLF.Web.Mvc.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ThrowIfException]
-        public async Task<ActionResult> Login([FromBody]SignInDTO model, string returnUrl)
+        public async Task<ActionResult> Login(SignInDTO model, string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl))
                 return ThrowJsonMessage(false);
@@ -61,8 +64,6 @@ namespace CLF.Web.Mvc.Controllers
 
             var result = new KeyValuePair<SignInStatus, AspNetUsers>(SignInStatus.Failure, null);
             result = await _applicationSignInManager.PasswordSignInAsync(model);
-            var phone = CurrentUserPhone;
-            var username = CurrentUserName;
             switch (result.Key)
             {
                 case SignInStatus.NotFoundUser:
@@ -144,13 +145,6 @@ namespace CLF.Web.Mvc.Controllers
                 return View("Error");
             }
             return View("Error");
-        }
-
-        public async Task<JsonResult> GenerateUserTokenAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            var rusult = await _userManager.GenerateUserTokenAsync(user, "Jwt", "xxxxxxxxxxxxxxxxx");
-            return Json(true);
         }
     }
 }

@@ -223,43 +223,53 @@ namespace CLF.Web.Framework.Infrastructure.Extensions
         {
             var jwtConfig = services.ConfigureStartupConfig<JwtConfig>(configuration.GetSection("Jwt"));
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //绑定[Authorize]，否则报401
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过防止重定向到登录页，而是显示401
+            // 默认cookie认证
+            var authenticationBuilder = services.AddAuthentication(options =>
+              {
+                  options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                  options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                  if (!string.IsNullOrEmpty(jwtConfig.SecurityKey))
+                  {
+                      options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //绑定[Authorize]，否则报401
+                      options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;//认证未通过防止重定向到登录页，而是显示401
+                  }
+              })
+             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+             {
+                 options.LoginPath = new PathString("/account/login");
+                 options.Cookie.Expiration = TimeSpan.FromHours(2);
+             });
+
+            //配置jwt
+            if (!string.IsNullOrEmpty(jwtConfig.SecurityKey))
             {
-                options.LoginPath = new PathString("/account/login");
-            });
-            // //.AddJwtBearer(options =>
-            // //   {
-            // //       options.TokenValidationParameters = new TokenValidationParameters
-            // //       {
-            // //           ValidateIssuer = true,
-            // //           ValidIssuer = jwtConfig.Issuer,
-            // //           ValidateAudience = true,
-            // //           ValidAudience = jwtConfig.Issuer,
-            // //           ValidateIssuerSigningKey = true,
-            // //           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
-            // //           ValidateLifetime = true,
-            // //           ClockSkew = TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
-            // //       };
-            // //       options.Events = new JwtBearerEvents
-            // //       {
-            // //           OnAuthenticationFailed = context =>
-            // //           {
-            // //               if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-            // //               {
-            // //                   context.Response.Headers.Add("Token-Expired", "true");
-            // //               }
-            // //               return Task.CompletedTask;
-            // //           }
-            // //       };
-            // //   })
+                authenticationBuilder.AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidIssuer = jwtConfig.Issuer,
+                      ValidateAudience = true,
+                      ValidAudience = jwtConfig.Issuer,
+                      ValidateIssuerSigningKey = true,
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecurityKey)),
+                      ValidateLifetime = true,
+                      ClockSkew = TimeSpan.Zero //token失效起始时间间隔，设置0，从生成token开始算失效时间，不设置默认5分钟
+                   };
+                  options.Events = new JwtBearerEvents
+                  {
+                      OnAuthenticationFailed = context =>
+                      {
+                          if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                          {
+                              context.Response.Headers.Add("Token-Expired", "true");
+                          }
+                          return Task.CompletedTask;
+                      }
+                  };
+              });
+            }
         }
 
         public static TConfig ConfigureStartupConfig<TConfig>(this IServiceCollection services, IConfiguration configuration) where TConfig : class, new()
